@@ -1,13 +1,14 @@
 from pydantic.main import BaseModel
-from lib.ressources.models import ProjectDetails, OwnerDetails, GroupDetails
+from app.lib.ressources.models import ProjectDetails, OwnerDetails, GroupDetails
 from fastapi import FastAPI
 import json
-import config
+from app import config
 import subprocess
-from lib.ressources.projectCreator import ProjectCreator
+from app.lib.ressources.projectCreator import ProjectCreator
 import requests
 from google.auth.transport.requests import Request
 from google.oauth2 import id_token
+
 
 
 app = FastAPI()
@@ -28,7 +29,6 @@ async def create_group(request: GroupDetails):
     open_id_connect_token = id_token.fetch_id_token(
         Request(), config.GROUP_CREATION_CLIENT_ID
     )
-    import pdb; pdb.set_trace()
     data = request.dict()
     
     manager = data.pop("manager")
@@ -38,7 +38,6 @@ async def create_group(request: GroupDetails):
         "accept": "application/json",
         "Content-Type": "application/json"
     }
-
     resp = requests.request('PUT',
         url = f'{config.URL_GROUP_CREATION}/createGroup/test',
         headers=header,
@@ -82,3 +81,6 @@ async def test_create_project(request: ProjectDetails):
     print("FINAL SPRINT")
     print(request.json())
     return {"data": f'blog is created as {request.label_map["hello"]}'}
+
+
+
