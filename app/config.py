@@ -6,3 +6,4 @@ GROUP_CREATION_CLIENT_ID = (
     "498329607286-7mq34redtdhq8niqr3f6mq2i58eshus6.apps.googleusercontent.com"
 )
 URL_GROUP_CREATION = "https://ofr-0tm-iam-secu-1-prd.ey.r.appspot.com"
+ 

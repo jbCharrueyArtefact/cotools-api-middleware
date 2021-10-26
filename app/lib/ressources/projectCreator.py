@@ -1,5 +1,5 @@
 import pathlib
-from lib.utils.git import (
+from app.lib.utils.git import (
     git_clone,
     git_pull,
     git_add,
@@ -7,8 +7,8 @@ from lib.utils.git import (
     git_push,
     get_and_update,
 )
-from lib.ressources.models import ProjectDetails
-from lib.utils.project import project_path, name
+from app.lib.ressources.models import ProjectDetails
+from app.lib.utils.project import project_path, name
 import json
 import os
 import shutil

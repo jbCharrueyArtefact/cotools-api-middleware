@@ -1,4 +1,4 @@
-from lib.ressources.models import ProjectDetails
+from app.lib.ressources.models import ProjectDetails
 
 
 def project_path(request: ProjectDetails):
