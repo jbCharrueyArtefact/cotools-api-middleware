@@ -16,15 +16,34 @@ import logging
 
 
 class ProjectCreator:
-    def __init__(self, url_git_repo, path_local_git_repo, request: ProjectDetails):
+    def __init__(
+        self,
+        url_git_repo,
+        path_local_git_repo,
+        request: ProjectDetails,
+        username=None,
+        password=None,
+    ):
         self.path_repo = path_local_git_repo
-        self.repo = self._createRepoIfNotExist(url_git_repo, path_local_git_repo)
+        self.repo = self._createRepoIfNotExist(
+            url_git_repo=url_git_repo,
+            username=username,
+            password=password,
+            path_local_git_repo=path_local_git_repo,
+        )
         self.request = request
 
-    def _createRepoIfNotExist(self, url_git_repo, path_local_git_repo):
+    def _createRepoIfNotExist(
+        self, url_git_repo, path_local_git_repo, username=None, password=None
+    ):
 
         if not pathlib.Path(f"./{path_local_git_repo}").exists():
-            return git_clone(url_git_repo, path_local_git_repo)
+            return git_clone(
+                repo_url=url_git_repo,
+                local_repo_target_path=path_local_git_repo,
+                username=username,
+                password=password,
+            )
         else:
             return get_and_update(self.path_repo)
 
@@ -43,10 +62,23 @@ class ProjectCreator:
         git_push(self.repo, "origin")
 
     @classmethod
-    def create_project(cls, url_git_repo, path_local_git_repo, request: ProjectDetails):
+    def create_project(
+        cls,
+        url_git_repo,
+        path_local_git_repo,
+        request: ProjectDetails,
+        username=None,
+        password=None,
+    ):
 
         try:
-            projectCreator = cls(url_git_repo, path_local_git_repo, request)
+            projectCreator = cls(
+                url_git_repo,
+                path_local_git_repo,
+                request,
+                username,
+                password,
+            )
             projectCreator._create_json()
             projectCreator._add_commit_and_push(f"crea/{name(projectCreator.request)}")
             return "project created"

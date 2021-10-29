@@ -8,42 +8,51 @@ from app.lib.ressources.projectCreator import ProjectCreator
 import requests
 from google.auth.transport.requests import Request
 from google.oauth2 import id_token
+from app.lib.utils.secret import Secret
+
+import os
 
 
 
 app = FastAPI()
 
-class Test3(BaseModel):
-    ok:str
+secret = Secret("/sa/secret.json")
+
+
+
 
 # {"demandeur": "demandeur", "country": "ofr", "basicat": "qwerty", "workload_details": "workload_details", "env": "dev", "parent_folder_id": 12345, "label_project_confidentiality": "c1","label_personal_data": "g0", "unicity_id": 1, "label_map": {"aa": "bb", "hello": 1}}
 @app.post("/create_project")
-async def create_project(request: ProjectDetails):
+def create_project(request: ProjectDetails):
     return ProjectCreator.create_project(
-        config.URL_OF_REMOTE_GIT, config.PATH_OF_GIT_REPO, request
+        url_git_repo=config.URL_OF_REMOTE_GIT,
+        path_local_git_repo=config.PATH_OF_GIT_REPO,
+        username=secret.get_secret("username"),
+        password=secret.get_secret("password"),
+        request=request,
     )
 
 
 @app.post("/create_group")
-async def create_group(request: GroupDetails):
+def create_group(request: GroupDetails):
     open_id_connect_token = id_token.fetch_id_token(
         Request(), config.GROUP_CREATION_CLIENT_ID
     )
     data = request.dict()
-    
+
     manager = data.pop("manager")
-    params = {"my_manager":manager}
+    params = {"my_manager": manager}
     header = {
         "Authorization": "Bearer {}".format(open_id_connect_token),
         "accept": "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     }
-    resp = requests.request('PUT',
-        url = f'{config.URL_GROUP_CREATION}/createGroup/test',
+    resp = requests.request(
+        "PUT",
+        url=f"{config.URL_GROUP_CREATION}/createGroup/test",
         headers=header,
         params=params,
         data=json.dumps(data),
-        
     )
     return resp.json()
 
@@ -81,6 +90,3 @@ async def test_create_project(request: ProjectDetails):
     print("FINAL SPRINT")
     print(request.json())
     return {"data": f'blog is created as {request.label_map["hello"]}'}
-
-
-
