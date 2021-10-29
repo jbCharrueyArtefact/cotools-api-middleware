@@ -1,8 +1,10 @@
 from git import Repo
 
 
-def git_clone(repo_url, local_repo_target_path):
-    repo = Repo.clone_from(repo_url, local_repo_target_path)
+def git_clone(repo_url, local_repo_target_path, username=None, password=None):
+    url = repo_url.replace("<USERNAME>", username).replace("<PASSWORD>", password)
+    repo = Repo.clone_from(url, local_repo_target_path, config="http.sslVerify=false")
+
     return repo
 
 

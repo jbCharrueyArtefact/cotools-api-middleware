@@ -1,14 +1,10 @@
 FROM python:3.9
 
-RUN ["apt-get", "update"]
-RUN ["apt-get", "install", "-y", "vim"]
-
 WORKDIR /code
 
 RUN apt-get update
 RUN apt-get install -y vim
 RUN apt-get install -y git
-
 
 COPY ./requirements.txt /code/requirements.txt
 
@@ -16,10 +12,10 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 COPY ./app /code/app
 
+ARG USER_EMAIL
+ARG USER_NAME
 
-
-# Downloading gcloud package
-ENV HTTP_PROXY="http://fpc.itn.intraorange:8080"
-ENV HTTPS_PROXY="http://fpc.itn.intraorange:8080" 
+RUN git config --global user.email ${USER_EMAIL}
+RUN git config --global user.name ${USER_NAME}
 
 CMD ["uvicorn", "app.app:app", "--host", "0.0.0.0", "--port", "80"]
