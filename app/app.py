@@ -10,8 +10,6 @@ from google.auth.transport.requests import Request
 from google.oauth2 import id_token
 from app.lib.utils.secret import Secret
 
-import os
-
 
 
 app = FastAPI()
@@ -82,6 +80,17 @@ def get_project_iam_rights(project_id: str):
         encoding="utf-8",
     )
     return json.loads(iam_rights)
+
+
+@app.get("/get_folder_hierarchy")
+def get_folder_hierarchy():
+    bearer = secret.get_secret("api_hierarchy")
+    r = requests.get(
+        url=config.HIERARCHY_URL, 
+        headers={"Authorization": f"Bearer {bearer}"},
+        verify=False
+    )
+    return r.json() 
 
 
 ############ Test purpose: simulate listening webhook ############
