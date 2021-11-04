@@ -22,12 +22,15 @@ secret = Secret("/sa/secret.json")
 # {"demandeur": "demandeur", "country": "ofr", "basicat": "qwerty", "workload_details": "workload_details", "env": "dev", "parent_folder_id": 12345, "label_project_confidentiality": "c1","label_personal_data": "g0", "unicity_id": 1, "label_map": {"aa": "bb", "hello": 1}}
 @app.post("/create_project")
 def create_project(request: ProjectDetails):
+    data=request.dict()
+    data["label_map"]["project-owner"]= ",".join(data["label_map"]["project-owner"])
+    data["label_map"]["accountable"]= ",".join(data["label_map"]["accountable"])
     return ProjectCreator.create_project(
         url_git_repo=config.URL_OF_REMOTE_GIT,
         path_local_git_repo=config.PATH_OF_GIT_REPO,
         username=secret.get_secret("username"),
         password=secret.get_secret("password"),
-        request=request,
+        request=data,
     )
 
 
