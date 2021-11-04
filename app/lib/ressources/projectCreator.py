@@ -84,5 +84,7 @@ class ProjectCreator:
             return "project created"
         except Exception as e:
             logging.warning(f"an error occured : {str(e)}")
+            return "fatal: Project could not be created"
         finally:
-            shutil.rmtree(path_local_git_repo)
+            if pathlib.Path(f"./{path_local_git_repo}/").exists():
+                shutil.rmtree(path_local_git_repo)
