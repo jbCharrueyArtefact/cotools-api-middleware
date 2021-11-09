@@ -17,12 +17,7 @@ import logging
 
 class ProjectCreator:
     def __init__(
-        self,
-        url_git_repo,
-        path_local_git_repo,
-        request: ProjectDetails,
-        username=None,
-        password=None,
+        self, url_git_repo, path_local_git_repo, request, username=None, password=None,
     ):
         self.path_repo = path_local_git_repo
         self.repo = self._createRepoIfNotExist(
@@ -52,7 +47,7 @@ class ProjectCreator:
         if not pathlib.Path(f"./{self.path_repo}/conf/prod").exists():
             os.mkdir(f"./{self.path_repo}/conf/prod")
 
-        final_dict = {name(self.request): self.request.dict()}
+        final_dict = {name(self.request): self.request.dict(by_alias=True)}
         with open(filename, "x") as json_file:
             json_file.write(json.dumps(final_dict))
 
@@ -63,28 +58,23 @@ class ProjectCreator:
 
     @classmethod
     def create_project(
-        cls,
-        url_git_repo,
-        path_local_git_repo,
-        request: ProjectDetails,
-        username=None,
-        password=None,
+        cls, url_git_repo, path_local_git_repo, request, username=None, password=None,
     ):
 
         try:
+
             projectCreator = cls(
-                url_git_repo,
-                path_local_git_repo,
-                request,
-                username,
-                password,
+                url_git_repo, path_local_git_repo, request, username, password,
             )
             projectCreator._create_json()
             projectCreator._add_commit_and_push(f"crea/{name(projectCreator.request)}")
-            return "project created"
+            
+            message = {"code": 200, "message": "project is being created"}
+            return json.dumps(message)
         except Exception as e:
             logging.warning(f"an error occured : {str(e)}")
-            return "fatal: Project could not be created"
+            message = {"code": 400, "message": "project could not be created"}
+            return json.dumps(message)
         finally:
             if pathlib.Path(f"./{path_local_git_repo}/").exists():
                 shutil.rmtree(path_local_git_repo)
