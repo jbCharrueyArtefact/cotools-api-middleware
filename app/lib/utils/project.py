@@ -1,13 +1,9 @@
-from app.lib.ressources.models import ProjectDetails
-
-
-def project_path(request: ProjectDetails):
+def project_path(request):
     name = f"{request.basicat}-{request.workload_details}-{request.env}"
-    env = request.env
     return f"prod/{name}"
 
 
-def name(request: ProjectDetails):
+def name(request):
     coutry = request.country
     basicat = request.basicat
     workload = request.workload_details
