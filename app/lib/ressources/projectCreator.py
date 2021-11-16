@@ -17,7 +17,12 @@ import logging
 
 class ProjectCreator:
     def __init__(
-        self, url_git_repo, path_local_git_repo, request, username=None, password=None,
+        self,
+        url_git_repo,
+        path_local_git_repo,
+        request,
+        username=None,
+        password=None,
     ):
         self.path_repo = path_local_git_repo
         self.repo = self._createRepoIfNotExist(
@@ -58,17 +63,26 @@ class ProjectCreator:
 
     @classmethod
     def create_project(
-        cls, url_git_repo, path_local_git_repo, request, username=None, password=None,
+        cls,
+        url_git_repo,
+        path_local_git_repo,
+        request,
+        username=None,
+        password=None,
     ):
 
         try:
 
             projectCreator = cls(
-                url_git_repo, path_local_git_repo, request, username, password,
+                url_git_repo,
+                path_local_git_repo,
+                request,
+                username,
+                password,
             )
             projectCreator._create_json()
             projectCreator._add_commit_and_push(f"crea/{name(projectCreator.request)}")
-            
+
             message = {"code": 200, "message": "project is being created"}
             return json.dumps(message)
         except Exception as e:

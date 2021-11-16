@@ -1,11 +1,20 @@
-import json
+import hvac
+from functools import lru_cache
+import os
 
 
-class Secret:
-    # to be changed when vault available
-    def __init__(self, path_to_file):
-        with open(path_to_file) as file:
-            self.secrets = json.load(file)
+@lru_cache(maxsize=None)
+def get_secrets(engine, secret):
+    client = hvac.Client(
+        url="https://area51-montsouris.preprod.hbx.geo.francetelecom.fr",
+        namespace="vault-cotools",
+        verify=False,
+    )
+    client.auth.ldap.login(
+        username=os.environ.get("VAULT_USERNAME"),
+        password=os.environ.get("VAULT_PASSWORD"),
+    )
 
-    def get_secret(self, name):
-        return self.secrets[name]
+    a = client.read(path=f"/{engine}/data/{secret}")
+
+    return a["data"]["data"]
