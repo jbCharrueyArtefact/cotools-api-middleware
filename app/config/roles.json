@@ -1,0 +1,521 @@
+{
+    "MOE Admin / DataLab Admin / Dev Expert":
+    {
+        "dev":
+        {
+            "Big Query ":
+            [
+                "roles/bigquery.admin"
+            ],
+            "Cloud Composer":
+            [
+                "roles/composer.environmentAndStorageObjectAdmin",
+                "roles/iam.serviceAccountUser"
+            ],
+            "Data Flow":
+            [
+                "roles/dataflow.admin"
+            ],
+            "Storage":
+            [
+                "roles/storage.admin"
+            ],
+            "Cloud Functions":
+            [
+                "roles/cloudfunctions.admin"
+            ],
+            "Cloud Run":
+            [
+                "roles/run.admin"
+            ],
+            "Dataproc":
+            [
+                "roles/dataproc.admin"
+            ],
+            "Pub Sub":
+            [
+                "roles/pubsub.admin" 
+            ],
+            "GKE":
+            [
+                "roles/container.admin"
+            ],
+            "Cloud End Point":
+            [
+                "roles/endpoints.portalAdmin"
+            ],
+            "Cloud Build":
+            [
+                "roles/cloudbuild.builds.editor"
+            ],
+            "Cloud Logging":
+            [
+                "roles/logging.admin"
+            ],
+            "Compute Engine":
+            [
+                "roles/compute.instanceAdmin.v1",
+                "roles/iam.serviceAccountUser"
+            ],
+            "Workflows":
+            [
+                "roles/workflows.admin"
+            ]
+
+        },
+        "prod":
+        {
+            "Big Query ":
+            [
+                "roles/bigquery.dataViewer"
+            ],
+            "Cloud Composer":
+            [
+                "roles/composer.user",
+                "roles/composer.environmentAndStorageObjectViewer" 
+            ],
+            "Data Flow":
+            [
+                "roles/dataflow.viewer"
+            ],
+            "Storage":
+            [
+                "roles/storage.objectViewer"
+            ],
+            "Cloud Functions":
+            [
+                "roles/cloudfunctions.viewer"
+            ],
+            "Cloud Run":
+            [
+                "roles/run.viewer"
+            ],
+            "Dataproc":
+            [
+                "roles/dataproc.viewer"
+            ],
+            "Pub Sub":
+            [
+                "roles/pubsub.viewer"
+            ],
+            "GKE":
+            [
+                "roles/container.viewer"
+            ],
+            "Cloud Build":
+            [
+                "roles/cloudbuild.builds.viewer"
+            ],
+            "Cloud Logging":
+            [
+                "roles/logging.viewer"
+            ],
+            "Compute Engine":
+            [
+                "roles/compute.viewer"
+            ],
+            "Workflows":
+            [
+                "roles/workflows.viewer"
+            ]
+
+        }
+    },
+    "MOE / Développeur":
+    {
+        "dev":
+        {
+            "Big Query ":
+            [
+                "roles/bigquery.dataEditor",
+                "roles/bigquery.jobUser"
+            ],
+            "Cloud Composer":
+            [
+                "roles/composer.user",
+                "roles/composer.environmentAndStorageObjectViewer"
+            ],
+            "Data Flow":
+            [
+                "roles/dataflow.developer"
+            ],
+            "Storage":
+            [
+                "roles/storage.objectAdmin"
+            ],
+            "Cloud Functions":
+            [
+                "roles/cloudfunctions.developer"
+            ],
+            "Cloud Run":
+            [
+                "roles/run.developer"
+            ],
+            "Dataproc":
+            [
+                "roles/dataproc.editor"
+            ],
+            "Pub Sub":
+            [
+                "roles/pubsub.editor"
+            ],
+            "GKE":
+            [
+                "roles/container.developer"
+            ],
+            "Cloud End Point":
+            [
+                "roles/endpoints.portalAdmin"
+            ],
+            "Cloud Build":
+            [
+                "roles/cloudbuild.builds.editor"
+            ],
+            "Cloud Logging":
+            [
+                "roles/logging.admin"
+            ],
+            "Compute Engine":
+            [
+                "roles/compute.instanceAdmin.v1"
+            ],
+            "Workflows":
+            [
+                "roles/workflows.editor"
+            ]
+
+        },
+        "prod":
+        {
+            "Big Query ":
+            [
+                "roles/bigquery.dataViewer"
+            ],
+            "Cloud Composer":
+            [
+                "roles/composer.user",
+                "roles/composer.environmentAndStorageObjectViewer" 
+            ],
+            "Data Flow":
+            [
+                "roles/dataflow.viewer"
+            ],
+            "Storage":
+            [
+                "roles/storage.objectViewer"
+            ],
+            "Cloud Functions":
+            [
+                "roles/cloudfunctions.viewer"
+            ],
+            "Cloud Run":
+            [
+                "roles/run.viewer"
+            ],
+            "Dataproc":
+            [
+                "roles/dataproc.viewer"
+            ],
+            "Pub Sub":
+            [
+                "roles/pubsub.viewer"
+            ],
+            "GKE":
+            [
+                "roles/container.viewer"
+            ],
+            "Cloud Build":
+            [
+                "roles/cloudbuild.builds.viewer"
+            ],
+            "Cloud Logging":
+            [
+                "roles/logging.viewer"
+            ],
+            "Compute Engine":
+            [
+                "roles/compute.viewer"
+            ],
+            "Workflows":
+            [
+                "roles/workflows.viewer"
+            ]
+        }
+    },
+    "Data Labeur":
+    {
+        "dev":
+        {
+            "Big Query ":
+            [
+                "roles/bigquery.dataEditor",
+                "roles/bigquery.jobUser"
+            ],
+            "Cloud Composer":
+            [
+                "roles/composer.user",
+                "roles/composer.environmentAndStorageObjectViewer"
+            ],
+            "Data Flow":
+            [
+                "roles/dataflow.developer"
+            ],
+            "Storage":
+            [
+                "roles/storage.objectAdmin"
+            ],
+            "Cloud Functions":
+            [
+                "roles/cloudfunctions.developer"
+            ],
+            "Cloud Run":
+            [
+                "roles/run.developer"
+            ],
+            "Dataproc":
+            [
+                "roles/dataproc.editor"
+            ],
+            "Pub Sub":
+            [
+                "roles/pubsub.editor"
+            ],
+            "GKE":
+            [
+                "roles/container.developer"
+            ],
+            "Cloud End Point":
+            [
+                "roles/endpoints.portalAdmin"
+            ],
+            "Cloud Build":
+            [
+                "roles/cloudbuild.builds.editor"
+            ],
+            "Cloud Logging":
+            [
+                "roles/logging.admin"
+            ],
+            "Compute Engine":
+            [
+                "roles/compute.instanceAdmin.v1"
+            ],
+            "Workflows":
+            [
+                "roles/workflows.editor"
+            ]
+        },
+        "prod":
+        {
+            "Big Query ":
+            [
+                "roles/bigquery.dataViewer"
+            ],
+            "Cloud Composer":
+            [
+                "roles/composer.user",
+                "roles/composer.environmentAndStorageObjectViewer" 
+            ],
+            "Data Flow":
+            [
+                "roles/dataflow.viewer"
+            ],
+            "Storage":
+            [
+                "roles/storage.objectViewer"
+            ],
+            "Cloud Functions":
+            [
+                "roles/cloudfunctions.viewer"
+            ],
+            "Cloud Run":
+            [
+                "roles/run.viewer"
+            ],
+            "Dataproc":
+            [
+                "roles/dataproc.viewer"
+            ],
+            "Pub Sub":
+            [
+                "roles/pubsub.viewer"
+            ],
+            "GKE":
+            [
+                "roles/container.viewer"
+            ],
+            "Cloud Build":
+            [
+                "roles/cloudbuild.builds.viewer"
+            ],
+            "Cloud Logging":
+            [
+                "roles/logging.viewer"
+            ],
+            "Compute Engine":
+            [
+                "roles/compute.viewer"
+            ],
+            "Workflows":
+            [
+                "roles/workflows.viewer"
+            ]
+        }
+    },
+    "Exploitant (ops)":
+    {
+        "prod":
+        {
+            "Big Query ":
+            [
+                "roles/bigquery.admin"
+            ],
+            "Cloud Composer":
+            [
+                "roles/composer.user",
+                "roles/composer.environmentAndStorageObjectViewer" 
+            ],
+            "Data Flow":
+            [
+                "roles/dataflow.developer"
+            ],
+            "Storage":
+            [
+                "roles/storage.objectViewer"
+            ],
+            "Cloud Functions":
+            [
+                "roles/cloudfunctions.developer"
+            ],
+            "Cloud Run":
+            [
+                "roles/run.developer"
+            ],
+            "Dataproc":
+            [
+                "roles/dataproc.editor"
+            ],
+            "Pub Sub":
+            [
+                "roles/pubsub.viewer"
+            ],
+            "GKE":
+            [
+                "roles/container.developer"
+            ],
+            "Cloud Build":
+            [
+                "roles/cloudbuild.builds.viewer"
+            ],
+            "Cloud Logging":
+            [
+                "roles/logging.viewer"
+            ],
+            "Compute Engine":
+            [
+                "roles/compute.viewer"
+            ],
+            "Workflows":
+            [
+                "roles/workflows.viewer"
+            ]
+        }
+    },
+    "Métier":
+    {
+        "dev":
+        {
+            "Big Query ":
+            [
+                "roles/bigquery.dataViewer"
+            ],
+            "Data Flow":
+            [
+                "roles/dataflow.viewer"
+            ],
+            "Storage":
+            [
+                "roles/storage.objectViewer"
+            ],
+            "Cloud Functions":
+            [
+                "roles/cloudfunctions.viewer"
+            ],
+            "Cloud Run":
+            [
+                "roles/run.viewer"
+            ],
+            "Dataproc":
+            [
+                "roles/dataproc.viewer"
+            ],
+            "Pub Sub":
+            [
+                "roles/pubsub.viewer"
+            ],
+            "Cloud Build":
+            [
+                "roles/cloudbuild.builds.viewer"
+            ],
+            "Cloud Logging":
+            [
+                "roles/logging.viewer"
+            ],
+            "Compute Engine":
+            [
+                "roles/compute.viewer"
+            ],
+            "Workflows":
+            [
+                "roles/workflows.viewer"
+            ]
+        },
+        "prod":
+        {
+            "Big Query ":
+            [
+                "roles/bigquery.dataViewer"
+            ],
+            "Data Flow":
+            [
+                "roles/dataflow.viewer"
+            ],
+            "Storage":
+            [
+                "roles/storage.objectViewer"
+            ],
+            "Cloud Functions":
+            [
+                "roles/cloudfunctions.viewer"
+            ],
+            "Cloud Run":
+            [
+                "roles/run.viewer"
+            ],
+            "Dataproc":
+            [
+                "roles/dataproc.viewer"
+            ],
+            "Pub Sub":
+            [
+                "roles/pubsub.viewer"
+            ],
+            "Cloud Build":
+            [
+                "roles/cloudbuild.builds.viewer"
+            ],
+            "Cloud Logging":
+            [
+                "roles/logging.viewer"
+            ],
+            "Compute Engine":
+            [
+                "roles/compute.viewer"
+            ],
+            "Workflows":
+            [
+                "roles/workflows.viewer"
+            ]
+        }
+    }
+}

@@ -88,6 +88,10 @@ def get_folder_hierarchy():
     )
     return r.json()
 
+@app.get("/get_roles_recommandation")
+def get_recommandation():
+    with open("app/config/roles.json") as roles:
+        return json.load(roles)
 
 ############ Test purpose: simulate listening webhook ############
 @app.post("/test_create_project")
