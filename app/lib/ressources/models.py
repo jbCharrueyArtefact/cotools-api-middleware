@@ -55,6 +55,25 @@ class ProjectDetails(BaseModel):
     unicity_id: int
     label_map: Label_map
 
+    class Config:
+        arbitrary_types_allowed = True
+        anystr_lower = True
+
+    @validator(
+        "country",
+        "basicat",
+        "workload_details",
+        "env",
+        "label_project_confidentiality",
+        "label_personal_data",
+        each_item=True,
+    )
+    def validate_format(cls, v):
+        assert re.match(
+            r"^[a-zA-Z0-9_-]+$", v
+        ), "charactere should only use lower case letters, digits, _ or -"
+        return v
+
 
 class OwnerDetails(BaseModel):
     email: str

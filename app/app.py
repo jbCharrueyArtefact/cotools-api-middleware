@@ -1,4 +1,3 @@
-from pydantic.main import BaseModel
 from app.lib.ressources.models import ProjectDetails, OwnerDetails, GroupDetails
 from fastapi import FastAPI
 import json
@@ -7,37 +6,43 @@ import subprocess
 from app.lib.ressources.projectCreator import ProjectCreator
 import requests
 from google.auth.transport.requests import Request
-from google.oauth2 import id_token
-from app.lib.utils.secret import Secret
+from google.oauth2 import service_account
+from googleapiclient import discovery
+from app.lib.utils.secret import get_secrets
+
 
 
 app = FastAPI()
 
-secret = Secret("/sa/secret.json")
-
 
 @app.post("/create_project")
 def create_project(request: ProjectDetails):
+    git_secret = get_secrets(engine="co-tools-secrets", secret="git")
     return ProjectCreator.create_project(
         url_git_repo=config.URL_OF_REMOTE_GIT,
         path_local_git_repo=config.PATH_OF_GIT_REPO,
-        username=secret.get_secret("username"),
-        password=secret.get_secret("password"),
+        username=git_secret["username"],
+        password=git_secret["password"],
         request=request,
     )
 
 
 @app.post("/create_group")
 def create_group(request: GroupDetails):
-    open_id_connect_token = id_token.fetch_id_token(
-        Request(), config.GROUP_CREATION_CLIENT_ID
+
+    sa_info = get_secrets(engine="sa", secret="create_group")
+    creds = service_account.IDTokenCredentials.from_service_account_info(
+        sa_info, target_audience=config.GROUP_CREATION_CLIENT_ID
     )
+    creds.refresh(Request())
+    token = creds.token
+
     data = request.dict()
 
     manager = data.pop("manager")
     params = {"my_manager": manager}
     header = {
-        "Authorization": "Bearer {}".format(open_id_connect_token),
+        "Authorization": "Bearer {}".format(token),
         "accept": "application/json",
         "Content-Type": "application/json",
     }
@@ -71,16 +76,30 @@ async def get_projects(request: OwnerDetails):
 
 @app.get("/get_project_iam_rights/{project_id}")
 def get_project_iam_rights(project_id: str):
-    iam_rights = subprocess.check_output(
-        ["gcloud", "projects", "get-iam-policy", project_id, "--format", "json"],
-        encoding="utf-8",
+    credentials = service_account.Credentials.from_service_account_info(
+        get_secrets(engine="sa", secret="read_iam"),
+        scopes=["https://www.googleapis.com/auth/cloud-platform"],
     )
-    return json.loads(iam_rights)
+    service = discovery.build("cloudresourcemanager", "v1", credentials=credentials)
+    print(service)
+
+    response = (
+        service.projects()
+        .getIamPolicy(resource=project_id, body={})
+        .execute(num_retries=5)
+    )
+    return response
+
+
+@app.get("/set_cache")
+def set_cache():
+    get_secrets(engine="sa", secret="read_iam")
+    get_secrets(engine="sa", secret="create_groupe")
 
 
 @app.get("/get_folder_hierarchy")
 def get_folder_hierarchy():
-    bearer = secret.get_secret("api_hierarchy")
+    bearer = get_secrets(engine="co-tools-secrets", secret="api_hierarchy")["token"]
     r = requests.get(
         url=config.HIERARCHY_URL,
         headers={"Authorization": f"Bearer {bearer}"},
