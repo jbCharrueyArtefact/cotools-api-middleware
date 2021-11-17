@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field, root_validator, validator
-from typing import List
 import re
+from typing import List
+
+from pydantic import BaseModel, Field, root_validator, validator
 
 
 class Label_map(BaseModel):

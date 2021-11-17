@@ -27,10 +27,10 @@ def create_project_orange(request: ProjectDetails, credentials):
 
 def _create_project(name, parent, labels, credentials):
     print(labels)
-    client = discovery.build("cloudresourcemanager", "v3", credentials=credentials)
+    client = discovery.build(
+        "cloudresourcemanager", "v3", credentials=credentials
+    )
 
     body = {"project_id": name, "parent": parent, "labels": labels}
     operation = client.projects().create(body=body).execute()
     return operation
-
-
