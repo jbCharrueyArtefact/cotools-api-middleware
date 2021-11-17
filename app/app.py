@@ -3,7 +3,7 @@ from fastapi import FastAPI
 import json
 from app import config
 import subprocess
-from app.lib.ressources.projectCreator import ProjectCreator
+from app.lib.ressources.projectCreator import create_project_orange
 import requests
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
@@ -12,19 +12,12 @@ from app.lib.utils.secret import get_secrets
 
 
 
-app = FastAPI()
-
 
 @app.post("/create_project")
 def create_project(request: ProjectDetails):
-    git_secret = get_secrets(engine="co-tools-secrets", secret="git")
-    return ProjectCreator.create_project(
-        url_git_repo=config.URL_OF_REMOTE_GIT,
-        path_local_git_repo=config.PATH_OF_GIT_REPO,
-        username=git_secret["username"],
-        password=git_secret["password"],
-        request=request,
-    )
+    sa_info = get_secrets(engine="sa", secret="create_project")
+    credentials = service_account.Credentials.from_service_account_info(sa_info)
+    return create_project_orange(request=request, credentials=credentials)
 
 
 @app.post("/create_group")
@@ -80,6 +73,7 @@ def get_project_iam_rights(project_id: str):
         get_secrets(engine="sa", secret="read_iam"),
         scopes=["https://www.googleapis.com/auth/cloud-platform"],
     )
+
     service = discovery.build("cloudresourcemanager", "v1", credentials=credentials)
     print(service)
 
@@ -94,7 +88,7 @@ def get_project_iam_rights(project_id: str):
 @app.get("/set_cache")
 def set_cache():
     get_secrets(engine="sa", secret="read_iam")
-    get_secrets(engine="sa", secret="create_groupe")
+    get_secrets(engine="sa", secret="create_project")
 
 
 @app.get("/get_folder_hierarchy")
