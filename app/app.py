@@ -1,7 +1,10 @@
-from app.lib.ressources.models import ProjectDetails, OwnerDetails, GroupDetails
+from app.lib.ressources.models import (
+    ProjectDetails,
+    OwnerDetails,
+    GroupDetails,
+)
 from fastapi import FastAPI
 import json
-from app import config
 import subprocess
 from app.lib.ressources.projectCreator import create_project_orange
 import requests
@@ -10,13 +13,17 @@ from google.oauth2 import service_account
 from googleapiclient import discovery
 from app.lib.utils.secret import get_secrets
 
+from app import config
 
+app = FastAPI()
 
 
 @app.post("/create_project")
 def create_project(request: ProjectDetails):
     sa_info = get_secrets(engine="sa", secret="create_project")
-    credentials = service_account.Credentials.from_service_account_info(sa_info)
+    credentials = service_account.Credentials.from_service_account_info(
+        sa_info
+    )
     return create_project_orange(request=request, credentials=credentials)
 
 
@@ -73,8 +80,9 @@ def get_project_iam_rights(project_id: str):
         get_secrets(engine="sa", secret="read_iam"),
         scopes=["https://www.googleapis.com/auth/cloud-platform"],
     )
-
-    service = discovery.build("cloudresourcemanager", "v1", credentials=credentials)
+    service = discovery.build(
+        "cloudresourcemanager", "v1", credentials=credentials
+    )
     print(service)
 
     response = (
@@ -93,7 +101,9 @@ def set_cache():
 
 @app.get("/get_folder_hierarchy")
 def get_folder_hierarchy():
-    bearer = get_secrets(engine="co-tools-secrets", secret="api_hierarchy")["token"]
+    bearer = get_secrets(engine="co-tools-secrets", secret="api_hierarchy")[
+        "token"
+    ]
     r = requests.get(
         url=config.HIERARCHY_URL,
         headers={"Authorization": f"Bearer {bearer}"},
@@ -101,10 +111,12 @@ def get_folder_hierarchy():
     )
     return r.json()
 
+
 @app.get("/get_roles_recommandation")
 def get_recommandation():
     with open("app/config/roles.json") as roles:
         return json.load(roles)
+
 
 ############ Test purpose: simulate listening webhook ############
 @app.post("/test_create_project")

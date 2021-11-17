@@ -1,9 +1,9 @@
 fastapi
-uvicorn[standard]
-pydantic
 gitpython
-requests
-google-auth
 google-api-python-client
+google-auth
 google-auth-httplib2
 hvac
+pydantic
+requests
+uvicorn[standard]

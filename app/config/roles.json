@@ -34,7 +34,7 @@
             ],
             "Pub Sub":
             [
-                "roles/pubsub.admin" 
+                "roles/pubsub.admin"
             ],
             "GKE":
             [
@@ -72,7 +72,7 @@
             "Cloud Composer":
             [
                 "roles/composer.user",
-                "roles/composer.environmentAndStorageObjectViewer" 
+                "roles/composer.environmentAndStorageObjectViewer"
             ],
             "Data Flow":
             [
@@ -194,7 +194,7 @@
             "Cloud Composer":
             [
                 "roles/composer.user",
-                "roles/composer.environmentAndStorageObjectViewer" 
+                "roles/composer.environmentAndStorageObjectViewer"
             ],
             "Data Flow":
             [
@@ -314,7 +314,7 @@
             "Cloud Composer":
             [
                 "roles/composer.user",
-                "roles/composer.environmentAndStorageObjectViewer" 
+                "roles/composer.environmentAndStorageObjectViewer"
             ],
             "Data Flow":
             [
@@ -373,7 +373,7 @@
             "Cloud Composer":
             [
                 "roles/composer.user",
-                "roles/composer.environmentAndStorageObjectViewer" 
+                "roles/composer.environmentAndStorageObjectViewer"
             ],
             "Data Flow":
             [
