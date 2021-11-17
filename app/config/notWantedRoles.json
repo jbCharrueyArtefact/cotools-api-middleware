@@ -1,0 +1,5 @@
+[
+  "roles/viewer",
+  "roles/owner",
+  "roles/editor"
+]
