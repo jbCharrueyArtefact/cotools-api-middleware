@@ -46,18 +46,19 @@ class Label_map(BaseModel):
 class ProjectDetails(BaseModel):
     demandeur: str
     country: str
-    basicat: str
+    basicat: str = Field(alias="project-internal-id")
     workload_details: str
-    env: str
+    env: str = Field(alias="environment")
     parent_folder_id: int
-    label_project_confidentiality: str
-    label_personal_data: str
-    unicity_id: int
+    label_project_confidentiality: str = Field(alias="project-confidentiality")
+    label_personal_data: str = Field(alias="personal-data")
+    unicity_id: str
     label_map: Label_map
 
     class Config:
         arbitrary_types_allowed = True
         anystr_lower = True
+        allow_population_by_field_name = True
 
     @validator(
         "country",
