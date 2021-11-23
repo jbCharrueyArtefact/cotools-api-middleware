@@ -2,6 +2,7 @@ from app.lib.ressources.models import (
     ProjectDetails,
     OwnerDetails,
     GroupDetails,
+    SetIamDetails,
 )
 from fastapi import FastAPI
 import json
@@ -83,7 +84,6 @@ def get_project_iam_rights(project_id: str):
     service = discovery.build(
         "cloudresourcemanager", "v1", credentials=credentials
     )
-    print(service)
 
     response = (
         service.projects()
@@ -91,6 +91,31 @@ def get_project_iam_rights(project_id: str):
         .execute(num_retries=5)
     )
     return response
+
+
+@app.post("/set_project_iam_rights")
+def set_project_iam_rights(request: SetIamDetails):
+    credentials = service_account.Credentials.from_service_account_info(
+        get_secrets(engine="sa", secret="read_iam"),
+        scopes=["https://www.googleapis.com/auth/cloud-platform"],
+    )
+
+    service = discovery.build(
+        "cloudresourcemanager", "v1", credentials=credentials
+    )
+
+    try:
+        for key in config.KEYS_TO_DELETE:
+            request.details.pop(key, None)
+
+        response = (
+            service.projects()
+            .setIamPolicy(resource=request.project_id, body=request.details)
+            .execute(num_retries=5)
+        )
+        return {"code": 200, "response": str(response)}
+    except Exception as err_msg:
+        return {"code": 400, "response": str(err_msg)}
 
 
 @app.get("/set_cache")

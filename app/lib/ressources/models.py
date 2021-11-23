@@ -86,3 +86,8 @@ class GroupDetails(BaseModel):
     description: str
     mail: str
     manager: str
+
+
+class SetIamDetails(BaseModel):
+    project_id: str
+    details: dict

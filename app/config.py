@@ -5,3 +5,4 @@ GROUP_CREATION_CLIENT_ID = (
 )
 URL_GROUP_CREATION = "https://ofr-0tm-iam-secu-1-prd.ey.r.appspot.com"
 HIERARCHY_URL = "https://gitlab.si.francetelecom.fr/api/v4/projects/24016/jobs/artifacts/master/raw/output.json?job=google-cloud-platform:list-folders:onmaster"
+KEYS_TO_DELETE = ["etag", "version"]
