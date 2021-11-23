@@ -22,9 +22,9 @@ run_brmc:
 
 run_local:
 	docker run \
-	--env VAULT_USERNAME=$(VAULT_USERNAME) \
-	--env VAULT_PASSWORD=$(VAULT_PASSWORD) \
+	--env-file=.env \
 	-p 8000:80 \
+	-v $(PWD)/app/cert/:/code/app/cert/ \
 	middleware_cotools_linux_server:0.1.0
 
 clean:

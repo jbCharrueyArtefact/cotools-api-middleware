@@ -120,9 +120,8 @@ def get_recommandation():
 
 @app.get("/all_roles")
 def get_roles():
-    def get_all_roles():
-        with open("app/config/allRoles.json") as roles:
-            return json.load(roles)
+    with open("app/config/allRoles.json") as roles:
+        return json.load(roles)
 
 
 ############ Test purpose: simulate listening webhook ############
