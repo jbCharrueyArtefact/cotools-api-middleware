@@ -8,7 +8,7 @@ def get_secrets(engine, secret):
     client = hvac.Client(
         url="https://area51-montsouris.preprod.hbx.geo.francetelecom.fr",
         namespace="vault-cotools",
-        verify=False,
+        verify="app/cert/cert.pem",
     )
     client.auth.ldap.login(
         username=os.environ.get("VAULT_USERNAME"),
