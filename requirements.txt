@@ -3,7 +3,10 @@ gitpython
 google-api-python-client
 google-auth
 google-auth-httplib2
+google-cloud-bigquery
+google-cloud-essential-contacts
 hvac
 pydantic
 requests
+urlparse2
 uvicorn[standard]

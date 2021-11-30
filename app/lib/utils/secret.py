@@ -18,3 +18,7 @@ def get_secrets(engine, secret):
     a = client.read(path=f"/{engine}/data/{secret}")
 
     return a["data"]["data"]
+
+
+def get_sa_info(secret):
+    return get_secrets("sa", secret)
