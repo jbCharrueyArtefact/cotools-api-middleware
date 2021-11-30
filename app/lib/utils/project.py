@@ -3,7 +3,7 @@ def project_path(request):
     return f"prod/{name}"
 
 
-def name(request):
+def create_name(request):
     coutry = request.country
     basicat = request.basicat
     workload = request.workload_details

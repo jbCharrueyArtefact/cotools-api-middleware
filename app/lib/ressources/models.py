@@ -1,5 +1,5 @@
 import re
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel, Field, root_validator, validator
 
@@ -16,23 +16,16 @@ class Label_map(BaseModel):
         anystr_lower = True
         max_anystr_length = 63
 
-    @validator("*", each_item=True)
+    @validator(
+        "cost_center", "project_family", "id_orange_carto", each_item=True
+    )
     def validate_format(cls, v):
         assert re.match(
             r"^[a-zA-Z0-9_-]+$", v
         ), "charactere should only use lower case letters, digits, _ or -"
         return v
 
-    @validator("accountable", "project_owner", each_item=True, pre=True)
-    def replace_dot_at_(cls, v):
-        return v.replace("@", "_at_").replace(".", "_dot_")
-
-    @validator("accountable", "project_owner")
-    def good_number_of_person(cls, v):
-        assert len(v) < 5, "too much accountables"
-        return v
-
-    @root_validator
+    """@root_validator
     def parse_liste(cls, values):
 
         for key in ["project_owner", "accountable"]:
@@ -41,7 +34,7 @@ class Label_map(BaseModel):
                 values[f"{key}{n}".replace("_", "-")] = elem
                 n += 1
             del values[key]
-        return values
+        return values"""
 
 
 class ProjectDetails(BaseModel):
@@ -86,6 +79,16 @@ class GroupDetails(BaseModel):
     description: str
     mail: str
     manager: str
+
+
+class EssentialContact(BaseModel):
+    email: Optional[str]
+    notificationCategorySubscriptions: List[str]
+    name: Optional[str]
+
+
+class EssentialContactList(BaseModel):
+    essentialContacts: List[EssentialContact]
 
 
 class SetIamDetails(BaseModel):

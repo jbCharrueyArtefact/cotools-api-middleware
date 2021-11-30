@@ -1,14 +1,20 @@
-from google.oauth2 import service_account
 from googleapiclient import discovery
-from app.lib.ressources.models import Label_map, ProjectDetails
-from app.lib.utils import project
+from app.lib.ressources.essentialContacts import modify_essentialContacts
+from app.lib.ressources.models import (
+    EssentialContact,
+    EssentialContactList,
+    ProjectDetails,
+)
+from app.lib.utils.project import create_name
 
 
 def create_project_orange(request: ProjectDetails, credentials):
 
-    name = project.name(request)
+    name = create_name(request)
     parent = f"folders/{request.parent_folder_id}"
-    labels1 = request.label_map.dict(by_alias=True)
+    labels1 = request.label_map.dict(
+        by_alias=True, exclude={"project_owner", "accountable"}
+    )
     labels2 = request.dict(
         by_alias=True,
         exclude={
@@ -26,11 +32,11 @@ def create_project_orange(request: ProjectDetails, credentials):
 
 
 def _create_project(name, parent, labels, credentials):
-    print(labels)
+
     client = discovery.build(
         "cloudresourcemanager", "v3", credentials=credentials
     )
 
     body = {"project_id": name, "parent": parent, "labels": labels}
     operation = client.projects().create(body=body).execute()
-    return operation
+    return operation, name
