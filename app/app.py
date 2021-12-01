@@ -15,6 +15,7 @@ from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 from googleapiclient import discovery
 from app.lib.utils.secret import get_secrets, get_sa_info
+from app.lib.utils import basicatClient
 
 from app import config
 from app.lib.ressources.essentialContacts import (
@@ -32,9 +33,20 @@ app = FastAPI()
 @app.post("/create_project")
 def create_project(request: ProjectDetails):
     sa_info = get_sa_info(config.SECRETS["create_project"])
+    iosw_secret = get_secrets(engine="co-tools-secrets", secret="iosw")
     credentials = service_account.Credentials.from_service_account_info(
         sa_info
     )
+
+    response = basicatClient.get_basicat_info(
+        iosw_secret["username"], iosw_secret["password"], request.basicat
+    )
+    if response.status_code != 200:
+        return {
+            "code": 404,
+            "message": f"No application found for basicat :{request.basicat}",
+        }
+
     response, name = create_project_orange(
         request=request, credentials=credentials
     )
@@ -207,6 +219,14 @@ def get_recommandation():
 def get_roles():
     with open("app/config/allRoles.json") as roles:
         return json.load(roles)
+
+
+@app.get("/basicat/{basicat}")
+def get_basicat_info(basicat: str):
+    secret = get_secrets(engine="co-tools-secrets", secret="iosw")
+    return basicatClient.get_basicat_info(
+        secret["username"], secret["password"], basicat
+    ).json()
 
 
 ############ Test purpose: simulate listening webhook ############
