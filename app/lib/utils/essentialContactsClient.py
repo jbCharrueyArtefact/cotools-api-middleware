@@ -1,8 +1,5 @@
 import json
-from google.cloud.essential_contacts_v1.services.essential_contacts_service.client import (
-    EssentialContactsServiceClient,
-)
-from google.cloud.essential_contacts_v1.types.enums import NotificationCategory
+
 from requests import Session
 from urllib.parse import urljoin
 from google.oauth2 import service_account
@@ -13,30 +10,14 @@ from app.lib.ressources.models import EssentialContact, EssentialContactList
 
 class EssentialContactsClient:
     def __init__(self, sa_info):
-        self.essentialContactClient = (
-            EssentialContactsServiceClient.from_service_account_info(sa_info)
-        )
+
         self.session = _ApiSession(
             sa_info, "https://essentialcontacts.googleapis.com/v1/"
         )
 
     def get_essentialContacts(self, project_id):
-        contacts = self.essentialContactClient.list_contacts(
-            parent=f"projects/{project_id}"
-        )
-        contactList = []
-        for contact in contacts:
-            essCon = EssentialContact(
-                email=contact.email,
-                name=contact.name,
-                notificationCategorySubscriptions=[
-                    category.name
-                    for category in contact.notification_category_subscriptions
-                ],
-            )
-            contactList.append(essCon)
-
-        return EssentialContactList(essentialContacts=contactList)
+        response = self.session.get(url=f"projects/{project_id}/contacts")
+        return EssentialContactList(**response.json())
 
     def delete_essentialContact(self, project_id, email):
         return self._get_id_by_contact_mail_and_func(

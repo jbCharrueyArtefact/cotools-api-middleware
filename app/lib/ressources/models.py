@@ -88,7 +88,10 @@ class EssentialContact(BaseModel):
 
 
 class EssentialContactList(BaseModel):
-    essentialContacts: List[EssentialContact]
+    essentialContacts: List[EssentialContact] = Field(alias="contacts")
+
+    class Config:
+        allow_population_by_field_name = True
 
 
 class SetIamDetails(BaseModel):

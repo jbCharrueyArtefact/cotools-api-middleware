@@ -101,7 +101,9 @@ async def get_projects(contact_id: str):
     a = get_secrets(engine="sa", secret="bigquery_cotools_dev")
     bqclient = BigQueryWrapper(a)
     current_view = config.ESSENTIAL_CONTACTS_CURRENT_VIEW
-    query = f"select project from {current_view}" f"where email ={contact_id}"
+    query = (
+        f"select project from `{current_view}`" f" where email ='{contact_id}'"
+    )
     results = bqclient.query_data(query=query)
     return [{"project": result.project} for result in results]
 
@@ -154,6 +156,7 @@ def set_cache():
     get_secrets(engine="sa", secret="read_iam")
     get_secrets(engine="sa", secret="create_project")
     get_secrets(engine="sa", secret="essential_contacts")
+    get_secrets(engine="sa", secret="bigquery_cotools_dev")
     get_secrets(engine="sa", secret="bigquery_cotools_dev")
 
 
