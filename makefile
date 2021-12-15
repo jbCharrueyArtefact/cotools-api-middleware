@@ -1,12 +1,14 @@
 all: build push
 
+B=$(shell git symbolic-ref HEAD | sed -e "s,.*/\(.*\),\1,")
 build : app
 	docker build --platform linux/x86_64 \
-	-t middleware_cotools_linux_server:0.1.0 .
+	-t middleware_cotools_linux_server:${B} .
 
 push:
-	docker tag middleware_cotools_linux_server:0.1.0 registry.gitlab.si.francetelecom.fr/lrousselotdesaintceran/co-tools-api-middleware
-	docker push registry.gitlab.si.francetelecom.fr/lrousselotdesaintceran/co-tools-api-middleware
+
+	docker tag middleware_cotools_linux_server:$(B) registry.gitlab.si.francetelecom.fr/lrousselotdesaintceran/co-tools-api-middleware:$(B)
+	docker push registry.gitlab.si.francetelecom.fr/lrousselotdesaintceran/co-tools-api-middleware:$(B)
 
 
 

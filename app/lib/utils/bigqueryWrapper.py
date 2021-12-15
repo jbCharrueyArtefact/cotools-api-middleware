@@ -8,7 +8,7 @@ class BigQueryWrapper(Client):
         client.__class__ = cls
         return client
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, service_account_info, *args, **kwargs):
         pass
 
     def insert_data(self, table_id=None, rows=None):

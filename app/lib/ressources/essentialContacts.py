@@ -26,21 +26,20 @@ def modify_essentialContacts(
 
 def create_essential_contact_from_list_email(
     project_id,
-    list_email,
-    notificationCategorySubscriptions,
+    mappings,
     essConClient,
     db_client,
     table_id,
 ):
     list_contact = []
-    for email in list_email:
-        essContacte = EssentialContact(
-            email=email,
-            notificationCategorySubscriptions=[
-                notificationCategorySubscriptions
-            ],
-        )
-        list_contact.append(essContacte)
+    for mapping in mappings:
+        for email in mapping["emails"]:
+            essContacte = EssentialContact(
+                email=email,
+                notificationCategorySubscriptions=[mapping["category"]],
+            )
+            list_contact.append(essContacte)
+    print(list_contact)
 
     return modify_essentialContacts(
         project_id=project_id,
@@ -52,17 +51,14 @@ def create_essential_contact_from_list_email(
 
 
 def wait_essential_contacts_disponibility(client, name):
-    created = False
+    status_code = 400
     count = 10
 
-    while not created:
-        try:
-            time.sleep(1)
-            client.get_essentialContacts(name)
-            created = True
-            count -= 1
-        except Exception:
-            print("Permission denied retrying")
+    while status_code != 200 and count > 0:
+        count -= 1
+        time.sleep(1)
+        response = client.is_requestable(name)
+        status_code = response.status_code
 
 
 def _update_essential_contacts_in_cloud(

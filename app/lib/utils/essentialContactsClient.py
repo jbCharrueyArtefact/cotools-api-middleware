@@ -15,6 +15,10 @@ class EssentialContactsClient:
             sa_info, "https://essentialcontacts.googleapis.com/v1/"
         )
 
+    def is_requestable(self, project_id):
+        response = self.session.get(url=f"projects/{project_id}/contacts")
+        return response
+
     def get_essentialContacts(self, project_id):
         response = self.session.get(url=f"projects/{project_id}/contacts")
         return EssentialContactList(**response.json())

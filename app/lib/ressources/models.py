@@ -1,3 +1,4 @@
+from datetime import date
 import re
 from typing import List, Optional
 
@@ -88,7 +89,9 @@ class EssentialContact(BaseModel):
 
 
 class EssentialContactList(BaseModel):
-    essentialContacts: List[EssentialContact] = Field(alias="contacts")
+    essentialContacts: Optional[List[EssentialContact]] = Field(
+        alias="contacts", default=[]
+    )
 
     class Config:
         allow_population_by_field_name = True
@@ -97,3 +100,8 @@ class EssentialContactList(BaseModel):
 class SetIamDetails(BaseModel):
     project_id: str
     details: dict
+
+
+class HistoricalIamDetails(BaseModel):
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
