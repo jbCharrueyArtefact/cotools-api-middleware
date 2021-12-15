@@ -4,19 +4,20 @@ from app.lib.ressources.models import (
     ProjectDetails,
     GroupDetails,
     SetIamDetails,
+    HistoricalIamDetails,
 )
 
 from fastapi import FastAPI
 import json
-import subprocess
 from app.lib.ressources.projectCreator import create_project_orange
 import requests
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 from googleapiclient import discovery
+from app.lib.utils.iam import get_interval_historical_data
+from app.lib.utils.project import create_name
 from app.lib.utils.secret import get_secrets, get_sa_info
 from app.lib.utils import basicatClient
-
 from app import config
 from app.lib.ressources.essentialContacts import (
     modify_essentialContacts,
@@ -34,6 +35,9 @@ app = FastAPI()
 def create_project(request: ProjectDetails):
     sa_info = get_sa_info(config.SECRETS["create_project"])
     iosw_secret = get_secrets(engine="co-tools-secrets", secret="iosw")
+    current_table_id = config.ESSENTIAL_CONTACTS_CURRENT_TABLE
+    info = get_sa_info(config.SECRETS["essential_contacts"])
+    a = get_sa_info(config.SECRETS["biqquery"])
     credentials = service_account.Credentials.from_service_account_info(
         sa_info
     )
@@ -51,32 +55,25 @@ def create_project(request: ProjectDetails):
         request=request, credentials=credentials
     )
 
-    current_table_id = config.ESSENTIAL_CONTACTS_CURRENT_TABLE
-    info = get_sa_info(config.SECRETS["essential_contacts"])
-    a = get_sa_info(config.SECRETS["biqquery"])
     client = EssentialContactsClient(info)
     bqclient = BigQueryWrapper(a)
 
     wait_essential_contacts_disponibility(client, name)
 
+    mappings = [
+        {"emails": request.label_map.accountable, "category": "TECHNICAL"},
+        {"emails": request.label_map.project_owner, "category": "ALL"},
+    ]
+
     create_essential_contact_from_list_email(
         project_id=name,
-        list_email=request.label_map.accountable,
-        notificationCategorySubscriptions="TECHNICAL",
+        mappings=mappings,
         essConClient=client,
         db_client=bqclient,
         table_id=current_table_id,
     )
-    create_essential_contact_from_list_email(
-        name,
-        request.label_map.project_owner,
-        "ALL",
-        client,
-        bqclient,
-        current_table_id,
-    )
 
-    return response
+    return {"code": 200, "message": "project created"}
 
 
 @app.post("/create_group")
@@ -153,9 +150,11 @@ def set_project_iam_rights(request: SetIamDetails):
         for key in config.KEYS_TO_DELETE:
             request.details.pop(key, None)
 
+        body = {"policy": request.details}
+
         response = (
             service.projects()
-            .setIamPolicy(resource=request.project_id, body=request.details)
+            .setIamPolicy(resource=request.project_id, body=body)
             .execute(num_retries=5)
         )
         return {"code": 200, "response": str(response)}
@@ -168,7 +167,6 @@ def set_cache():
     get_secrets(engine="sa", secret="read_iam")
     get_secrets(engine="sa", secret="create_project")
     get_secrets(engine="sa", secret="essential_contacts")
-    get_secrets(engine="sa", secret="bigquery_cotools_dev")
     get_secrets(engine="sa", secret="bigquery_cotools_dev")
 
 
@@ -221,17 +219,22 @@ def get_roles():
         return json.load(roles)
 
 
+@app.get("/projects/{project_id}/iam/list_history")
+def list_iam_history(project_id, interval: HistoricalIamDetails):
+    service_account = get_secrets(engine="sa", secret="bigquery_cotools_dev")
+    bq_client = BigQueryWrapper(service_account)
+    time_interval = get_interval_historical_data(interval)
+    query_root = f"SELECT * FROM `{config.REFERENCE_TABLE_IAM_HISTORY}` where project_name = '{str(project_id)}'"
+    query = (
+        f"{query_root} AND {time_interval}" if time_interval else query_root
+    )
+    result = bq_client.query_data(query)
+    return [dict(row) for row in result]
+
+
 @app.get("/basicat/{basicat}")
 def get_basicat_info(basicat: str):
     secret = get_secrets(engine="co-tools-secrets", secret="iosw")
     return basicatClient.get_basicat_info(
         secret["username"], secret["password"], basicat
     ).json()
-
-
-############ Test purpose: simulate listening webhook ############
-@app.post("/test_create_project")
-async def test_create_project(request: ProjectDetails):
-    print("FINAL SPRINT")
-    print(request.json())
-    return {"data": f'blog is created as {request.label_map["hello"]}'}
