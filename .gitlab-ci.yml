@@ -1,0 +1,30 @@
+variables:
+      IMAGE_NAME: registry.gitlab.si.francetelecom.fr/lrousselotdesaintceran/co-tools-api-middleware
+      IMAGE_FOLDER: image
+      IMAGE_FILE_NAME: im.tar
+      ENVFILE: $ENVFILE
+      VAULT_USERNAME: $VAULT_USERNAME
+      VAULT_PASSWORD: $VAULT_PASSWORD
+
+include:
+  - local : 'ci/.build.yml'
+  - local : 'ci/.integration.yml'
+  - local : 'ci/.lint-ci.yml'
+  - local : 'ci/.unit-test.yml'
+  - local : 'ci/.retag.yml'
+
+stages:
+  - checker
+  - formater
+  - unit-tester
+  - builder
+  - integration-tester
+  - retager
+
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+      when: never
+    - if: '$CI_COMMIT_BRANCH'

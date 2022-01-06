@@ -1,11 +1,24 @@
 import json
+from logging import error
 
 from requests import Session
 from urllib.parse import urljoin
 from google.oauth2 import service_account
 from google.auth.transport.requests import Request
+import requests
 
 from app.lib.ressources.models import EssentialContact, EssentialContactList
+
+
+def httpErrorHandler(func):
+    def wrapper(*args, **kwargs):
+        status_code, return_value = func(*args, **kwargs)
+        if status_code == 200:
+            return return_value
+        else:
+            raise Exception()
+
+    return wrapper
 
 
 class EssentialContactsClient:
@@ -19,15 +32,18 @@ class EssentialContactsClient:
         response = self.session.get(url=f"projects/{project_id}/contacts")
         return response
 
+    #
+    @httpErrorHandler
     def get_essentialContacts(self, project_id):
         response = self.session.get(url=f"projects/{project_id}/contacts")
-        return EssentialContactList(**response.json())
+        return response.status_code, EssentialContactList(**response.json())
 
     def delete_essentialContact(self, project_id, email):
         return self._get_id_by_contact_mail_and_func(
             project_id, email, self._del_essential_contact_by_id
         )
 
+    @httpErrorHandler
     def create_essentialContacts(self, project_id, data: EssentialContact):
         sentData = {
             "email": data.email,
@@ -38,7 +54,7 @@ class EssentialContactsClient:
             url=f"projects/{project_id}/contacts",
             data=json.dumps(sentData),
         )
-        return response.json
+        return response.status_code, response.json()
 
     def patch_essentialContact(self, project_id, contact_email, data):
         self._get_id_by_contact_mail_and_func(
@@ -63,13 +79,15 @@ class EssentialContactsClient:
             if contact.email == contact_email:
                 return contact.name
 
+    @httpErrorHandler
     def _del_essential_contact_by_id(self, contact_id):
 
         response = self.session.delete(
             url=f"{contact_id}",
         )
-        return response.json
+        return response.status_code, response.json
 
+    @httpErrorHandler
     def _patch_essential_contact_by_id(
         self, contact_id, data: EssentialContact
     ):
@@ -83,7 +101,7 @@ class EssentialContactsClient:
             data=json.dumps(sentData),
         )
 
-        return response.json
+        return response.status_code, response.json
 
 
 class _ApiSession(Session):

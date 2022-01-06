@@ -1,6 +1,6 @@
 from datetime import date
 import re
-from typing import List, Optional
+from typing import List, Optional, Union, Dict
 
 from pydantic import BaseModel, Field, root_validator, validator
 
@@ -88,6 +88,11 @@ class EssentialContact(BaseModel):
     name: Optional[str]
 
 
+class EssentialContactOut(BaseModel):
+    email: Optional[str]
+    notificationCategorySubscriptions: List[str]
+
+
 class EssentialContactList(BaseModel):
     essentialContacts: Optional[List[EssentialContact]] = Field(
         alias="contacts", default=[]
@@ -97,9 +102,22 @@ class EssentialContactList(BaseModel):
         allow_population_by_field_name = True
 
 
+class EssentialContactListOut(BaseModel):
+    essentialContacts: Optional[List[EssentialContactOut]] = Field(
+        alias="contacts", default=[]
+    )
+
+    class Config:
+        allow_population_by_field_name = True
+
+
+class Policy(BaseModel):
+    bindings: Optional[List[Dict]] = []
+
+
 class SetIamDetails(BaseModel):
     project_id: str
-    details: dict
+    details: Policy
 
 
 class HistoricalIamDetails(BaseModel):
