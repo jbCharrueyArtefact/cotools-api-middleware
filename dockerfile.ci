@@ -1,0 +1,6 @@
+FROM python:3.9-slim
+COPY requirements.txt requirements.txt
+
+RUN pip install --no-cache-dir --upgrade pytest black flake8 && \
+pip install --no-cache-dir --upgrade -r requirements.txt && \
+apt-get update && apt-get -y install curl

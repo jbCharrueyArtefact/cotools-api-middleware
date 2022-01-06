@@ -1,0 +1,13 @@
+image : registry.gitlab.si.francetelecom.fr/lrousselotdesaintceran/co-tools-api-middleware/base/co-tools-test
+
+checker:
+    stage: checker
+    script:
+      - flake8 .
+    allow_failure: false
+
+formater:
+    stage: formater
+    script:
+      - black --check .
+    allow_failure: true

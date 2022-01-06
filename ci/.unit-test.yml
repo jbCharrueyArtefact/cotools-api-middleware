@@ -1,0 +1,6 @@
+unit-tester:
+  image: registry.gitlab.si.francetelecom.fr/lrousselotdesaintceran/co-tools-api-middleware/base/co-tools-test
+  stage: unit-tester
+  script:
+    - pytest test/unit/
+  allow_failure: false

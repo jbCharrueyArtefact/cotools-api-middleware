@@ -1,6 +1,8 @@
+from logging import exception
 import hvac
 from functools import lru_cache
 import os
+import traceback
 
 
 @lru_cache(maxsize=None)
