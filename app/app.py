@@ -1,3 +1,4 @@
+from logging import exception
 from app.lib.ressources.models import (
     EssentialContactList,
     EssentialContactListOut,

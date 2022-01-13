@@ -5,7 +5,7 @@ integration-tester:
         alias : cotools
     stage: integration-tester
     before_script:
-     - export PYTHONPATH=.
+      - export PYTHONPATH=.
     script:
       - pytest test/integration/
     allow_failure: false
