@@ -2,13 +2,13 @@ from logging import exception
 import hvac
 from functools import lru_cache
 import os
-import traceback
+from app import config
 
 
 @lru_cache(maxsize=None)
 def get_secrets(engine, secret):
     client = hvac.Client(
-        url="https://area51-montsouris.preprod.hbx.geo.francetelecom.fr",
+        url=config.VAULT,
         namespace="vault-cotools",
         verify="app/cert/cert.pem",
     )
