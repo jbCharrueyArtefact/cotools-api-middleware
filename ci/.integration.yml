@@ -3,7 +3,7 @@ integration-tester:
     services:
       - name : $IMAGE_NAME:$CI_COMMIT_REF_SLUG
         alias : cotools
-    stage: integration-tester
+    stage: test
     before_script:
       - export PYTHONPATH=.
     script:
@@ -11,3 +11,6 @@ integration-tester:
     allow_failure: false
     only:
       - merge_requests
+    except:
+      - develop
+      - master
