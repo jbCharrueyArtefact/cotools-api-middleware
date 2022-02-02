@@ -2,7 +2,6 @@ from logging import exception
 from app.lib.ressources.models import (
     EssentialContactList,
     EssentialContactListOut,
-    EssentialContactOut,
     Policy,
     ProjectDetails,
     GroupDetails,
@@ -35,11 +34,11 @@ app = FastAPI()
 
 @app.post("/create_project", status_code=200)
 def create_project(request: ProjectDetails, response: Response):
-    sa_info = get_sa_info(config.SECRETS["create_project"])
+    sa_info = get_sa_info("create_project")
     iosw_secret = get_secrets(engine="co-tools-secrets", secret="iosw")
     current_table_id = config.ESSENTIAL_CONTACTS_CURRENT_TABLE
-    info = get_sa_info(config.SECRETS["essential_contacts"])
-    a = get_sa_info(config.SECRETS["biqquery"])
+    info = get_sa_info("essential_contacts")
+    bq_info = get_sa_info("bq")
     credentials = service_account.Credentials.from_service_account_info(
         sa_info
     )
@@ -62,7 +61,7 @@ def create_project(request: ProjectDetails, response: Response):
         return {"message": "project could not be created"}
 
     client = EssentialContactsClient(info)
-    bqclient = BigQueryWrapper(a)
+    bqclient = BigQueryWrapper(bq_info)
 
     wait_essential_contacts_disponibility(client, name)
 
@@ -120,7 +119,7 @@ def create_group(request: GroupDetails):
 
 @app.get("/contacts/{contact_id}/owner")
 async def get_projects(contact_id: str):
-    a = get_secrets(engine="sa", secret="bigquery_cotools_dev")
+    a = get_sa_info("bq")
     bqclient = BigQueryWrapper(a)
     current_view = config.ESSENTIAL_CONTACTS_CURRENT_VIEW
     query = (
@@ -133,7 +132,7 @@ async def get_projects(contact_id: str):
 @app.get("/get_project_iam_rights/{project_id}", response_model=Policy)
 def get_project_iam_rights(project_id: str, response: Response):
     credentials = service_account.Credentials.from_service_account_info(
-        get_secrets(engine="sa", secret="read_iam"),
+        get_sa_info("iam"),
         scopes=["https://www.googleapis.com/auth/cloud-platform"],
     )
     service = discovery.build(
@@ -155,7 +154,7 @@ def get_project_iam_rights(project_id: str, response: Response):
 @app.post("/set_project_iam_rights")
 def set_project_iam_rights(request: SetIamDetails, response: Response):
     credentials = service_account.Credentials.from_service_account_info(
-        get_secrets(engine="sa", secret="read_iam"),
+        get_sa_info("iam"),
         scopes=["https://www.googleapis.com/auth/cloud-platform"],
     )
 
@@ -172,9 +171,9 @@ def set_project_iam_rights(request: SetIamDetails, response: Response):
             .execute(num_retries=5)
         )
         return {"message": "success"}
-    except Exception:
+    except Exception as e:
         response.status_code = status.HTTP_404_NOT_FOUND
-        return {"message": "failed"}
+        return {"message": "failed", "error": str(e.error_details)}
 
 
 @app.get("/set_cache")
@@ -205,12 +204,13 @@ def get_folder_hierarchy():
 )
 def get_essential_contacts(project_id: str, response: Response):
 
-    info = get_sa_info(config.SECRETS["essential_contacts"])
+    info = get_sa_info("essential_contacts")
     client = EssentialContactsClient(info)
     try:
         a = client.get_essentialContacts(project_id)
         return a
     except Exception:
+
         response.status_code = status.HTTP_404_NOT_FOUND
         return EssentialContactListOut(**{})
 
@@ -221,8 +221,8 @@ def modify_essential_contacts(
 ):
 
     current_table_id = config.ESSENTIAL_CONTACTS_CURRENT_TABLE
-    info = get_sa_info(config.SECRETS["essential_contacts"])
-    a = get_sa_info(config.SECRETS["biqquery"])
+    info = get_sa_info("essential_contacts")
+    a = get_sa_info("bq")
     client = EssentialContactsClient(info)
     bqclient = BigQueryWrapper(a)
     try:
@@ -253,7 +253,7 @@ def get_roles():
 
 @app.get("/projects/{project_id}/iam/list_history")
 def list_iam_history(project_id, interval: HistoricalIamDetails):
-    service_account = get_secrets(engine="sa", secret="bigquery_cotools_dev")
+    service_account = get_sa_info("bq")
     bq_client = BigQueryWrapper(service_account)
     time_interval = get_interval_historical_data(interval)
     query_root = f"SELECT * FROM `{config.REFERENCE_TABLE_IAM_HISTORY}` where project_name = '{str(project_id)}'"

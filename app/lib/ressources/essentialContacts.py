@@ -39,7 +39,6 @@ def create_essential_contact_from_list_email(
                 notificationCategorySubscriptions=[mapping["category"]],
             )
             list_contact.append(essContacte)
-    print(list_contact)
 
     return modify_essentialContacts(
         project_id=project_id,

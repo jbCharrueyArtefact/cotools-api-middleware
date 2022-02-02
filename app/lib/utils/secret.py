@@ -22,5 +22,20 @@ def get_secrets(engine, secret):
     return a["data"]["data"]
 
 
-def get_sa_info(secret):
-    return get_secrets("sa", secret)
+@lru_cache(maxsize=None)
+def get_sa_info(sa):
+    client = hvac.Client(
+        url=config.SA_VAULT_URL,
+        namespace=config.SA_VAULT_NAMESPACE,
+        verify="app/cert/cert.pem",
+    )
+
+    client.auth.approle.login(
+        role_id=os.environ.get("ROLE_ID"),
+        secret_id=os.environ.get("SECRET_ID"),
+    )
+
+    secret = client.read(
+        path=f"{config.SA_VAULT_PATH}{config.SA_NAMES.get(sa)}"
+    )
+    return secret["data"]["data"]
