@@ -9,8 +9,10 @@ class Label_map(BaseModel):
     cost_center: str = Field(alias="cost-center")
     accountable: List[str]
     project_owner: List[str] = Field(alias="project-owner")
-    project_family: str = Field(alias="project-family")
+    project_family: Optional[str] = Field(alias="project-family")
     id_orange_carto: str = Field(alias="id-orange-carto")
+    epic: Optional[str]
+    expiration_date: Optional[str] = Field(alias="expiration-date")
 
     class Config:
         arbitrary_types_allowed = True
@@ -97,6 +99,17 @@ class EssentialContactList(BaseModel):
     essentialContacts: Optional[List[EssentialContact]] = Field(
         alias="contacts", default=[]
     )
+
+    @validator("essentialContacts")
+    def merge_same_mail(cls, v):
+        for i in range(len(v)):
+            for j in range(i + 1, len(v)):
+                if v[i].email == v[j].email:
+                    v[i].notificationCategorySubscriptions.extend(
+                        v[j].notificationCategorySubscriptions
+                    )
+                    del v[j]
+        return v
 
     class Config:
         allow_population_by_field_name = True

@@ -5,6 +5,8 @@ variables:
       ENVFILE: $ENVFILE
       VAULT_USERNAME: $VAULT_USERNAME
       VAULT_PASSWORD: $VAULT_PASSWORD
+      ROLE_ID: $ROLE_ID
+      SECRET_ID: $SECRET_ID
 
 include:
   - local : 'ci/.build.yml'
