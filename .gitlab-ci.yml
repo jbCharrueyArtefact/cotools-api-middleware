@@ -11,15 +11,14 @@ include:
   - local : 'ci/.integration.yml'
   - local : 'ci/.lint-ci.yml'
   - local : 'ci/.unit-test.yml'
-  - local : 'ci/.retag.yml'
+  - local : 'ci/.build-final.yml'
 
 stages:
-  - checker
-  - formater
-  - unit-tester
-  - builder
-  - integration-tester
-  - retager
+  - pre
+  - unit-test
+  - build-test
+  - test
+  - deploy
 
 
 workflow:
