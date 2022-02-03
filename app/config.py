@@ -32,11 +32,5 @@ SA_NAMES = {
     "create_project": "sa-ofr-fgt-create-project",
     "iam": "sa-ofr-fgt-iam",
     "essential_contacts": "sa-ofr-fgt-essential-contacts",
-}
-
-
-SECRETS = {
-    "biqquery": "bigquery_cotools_dev",
-    "essential_contacts": "essential_contacts",
-    "create_project": "create_project",
+    "logging": "sa-ofr-fgt-logging-app",
 }

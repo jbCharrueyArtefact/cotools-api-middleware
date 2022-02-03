@@ -1,4 +1,4 @@
-from logging import exception
+from typing import Callable
 from app.lib.ressources.models import (
     EssentialContactList,
     EssentialContactListOut,
@@ -8,12 +8,12 @@ from app.lib.ressources.models import (
     SetIamDetails,
     HistoricalIamDetails,
 )
+from app.logger.logger import logger
 
-from fastapi import FastAPI, Response, status
+from fastapi import FastAPI, Request, Response, status
 import json
 from app.lib.ressources.projectCreator import create_project_orange
 import requests
-from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 from googleapiclient import discovery
 from app.lib.utils.iam import get_interval_historical_data
@@ -27,9 +27,46 @@ from app.lib.ressources.essentialContacts import (
 )
 from app.lib.utils.essentialContactsClient import EssentialContactsClient
 from app.lib.utils.bigqueryWrapper import BigQueryWrapper
+from fastapi.routing import APIRoute
 
 
 app = FastAPI()
+
+
+class CustomRoute(APIRoute):
+    def get_route_handler(self) -> Callable:
+        original_route_handler = super().get_route_handler()
+
+        async def custom_route_handler(request: Request) -> Response:
+            body = await request.body()
+            bodyJson = {}
+            if len(body) > 0:
+                bodyJson = await request.json()
+
+            msg = {
+                "body": bodyJson,
+                "headers": dict(request.headers),
+                "direction": "in",
+                "method": request.method,
+                "path": str(request.url),
+            }
+
+            logger.info(msg=msg)
+            response: Response = await original_route_handler(request)
+
+            msg["status"] = response.status_code
+
+            if response.status_code == 200:
+                logger.info(msg=msg)
+            else:
+                logger.error(msg=msg)
+
+            return response
+
+        return custom_route_handler
+
+
+app.router.route_class = CustomRoute
 
 
 @app.post("/create_project", status_code=200)

@@ -5,6 +5,7 @@ google-auth
 google-auth-httplib2
 google-cloud-bigquery
 google-cloud-essential-contacts
+google-cloud-logging
 hvac
 pydantic
 python-dotenv

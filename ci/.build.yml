@@ -7,7 +7,7 @@ builder:test:
       - cat $CERT >> app/cert/cert.pem
     script:
       - docker build -t $IMAGE_NAME:$CI_COMMIT_REF_SLUG -f dockerfile .
-      - docker push $IMAGE_NAME
+      - docker push $IMAGE_NAME:$CI_COMMIT_REF_SLUG
     allow_failure: false
     only:
       - merge_requests
