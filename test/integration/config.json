@@ -1,0 +1,10 @@
+{
+  "local": {
+    "host": "http://127.0.0.1",
+    "port": 8000
+  },
+  "test": {
+    "host": "http://cotools",
+    "port": 80
+  }
+}

@@ -1,0 +1,16 @@
+integration-tester:
+    image: registry.gitlab.si.francetelecom.fr/lrousselotdesaintceran/co-tools-api-middleware/base/co-tools-test
+    services:
+      - name : $IMAGE_NAME:$CI_COMMIT_REF_SLUG
+        alias : cotools
+    stage: test
+    before_script:
+      - export PYTHONPATH=.
+    script:
+      - pytest test/integration/
+    allow_failure: false
+    only:
+      - merge_requests
+    except:
+      - develop
+      - master

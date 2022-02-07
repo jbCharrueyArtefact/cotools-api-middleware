@@ -1,0 +1,16 @@
+builder:test:
+    image: sfy-search-registry-build.artifactory.si.francetelecom.fr/build/docker:dind
+    stage: build-test
+    before_script:
+      - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+      - mkdir ./app/cert
+      - cat $CERT >> app/cert/cert.pem
+    script:
+      - docker build -t $IMAGE_NAME:$CI_COMMIT_REF_SLUG -f dockerfile .
+      - docker push $IMAGE_NAME:$CI_COMMIT_REF_SLUG
+    allow_failure: false
+    only:
+      - merge_requests
+    except:
+      - develop
+      - master

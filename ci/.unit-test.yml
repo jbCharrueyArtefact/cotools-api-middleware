@@ -1,0 +1,11 @@
+unit-tester:
+  image: registry.gitlab.si.francetelecom.fr/lrousselotdesaintceran/co-tools-api-middleware/base/co-tools-test
+  stage: unit-test
+  before_script:
+      - export PYTHONPATH=.
+  script:
+    - pytest test/unit/
+  allow_failure: false
+  except:
+    - develop
+    - master

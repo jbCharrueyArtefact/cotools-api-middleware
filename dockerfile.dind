@@ -1,0 +1,4 @@
+FROM sfy-search-registry-build.artifactory.si.francetelecom.fr/build/docker:dind
+
+RUN apt-get install python3 python3-pip curl && \
+pip3 install requests pytest
