@@ -13,7 +13,7 @@ class BigQueryWrapper(Client):
 
     def insert_data(self, table_id=None, rows=None):
         table = self.get_table(table_id)
-        errors = self.insert_rows(table, rows)
+        errors = self.load_table_from_json(json_rows=rows, destination=table)
         return errors
 
     def delete_data(self, table_id=None, condition="1=1"):

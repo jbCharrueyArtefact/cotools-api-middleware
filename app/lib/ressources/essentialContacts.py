@@ -1,4 +1,5 @@
 import datetime
+from email.policy import default
 
 from google.cloud.essential_contacts_v1.types.enums import NotificationCategory
 from app.lib.ressources.models import EssentialContact, EssentialContactList
@@ -106,6 +107,11 @@ def _delete_essential_contacts(
             )
 
 
+def _mydatetimeconverter(o):
+    if isinstance(o, datetime.datetime):
+        return o.__str__()
+
+
 def _update_db(
     project_id, data, existing_contacts, db_client, current_table_id
 ):
@@ -120,8 +126,8 @@ def _update_db(
     _add_status_and_datetime_and_append(to_enable, "enabled", rows)
 
     if len(rows) > 0:
-
-        return db_client.insert_data(current_table_id, rows)
+        rows_json = json.dumps(rows, default=_mydatetimeconverter)
+        return db_client.insert_data(current_table_id, rows_json)
 
     else:
         return None

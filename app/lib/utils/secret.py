@@ -6,7 +6,7 @@ from app import config
 
 
 @lru_cache(maxsize=None)
-def get_secrets(engine, secret):
+def get_secrets(secret):
     client = hvac.Client(
         url=config.VAULT,
         namespace="vault-cotools",
@@ -17,7 +17,7 @@ def get_secrets(engine, secret):
         password=os.environ.get("VAULT_PASSWORD"),
     )
 
-    a = client.read(path=f"/{engine}/data/{secret}")
+    a = client.read(path=f"/{config.VAULT_PATH}/{secret}")
 
     return a["data"]["data"]
 

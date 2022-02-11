@@ -55,6 +55,7 @@ class CustomRoute(APIRoute):
             response: Response = await original_route_handler(request)
 
             msg["status"] = response.status_code
+            msg["direction"] = "out"
 
             if response.status_code == 200:
                 logger.info(msg=msg)
@@ -72,7 +73,7 @@ app.router.route_class = CustomRoute
 @app.post("/create_project", status_code=200)
 def create_project(request: ProjectDetails, response: Response):
     sa_info = get_sa_info("create_project")
-    iosw_secret = get_secrets(engine="co-tools-secrets", secret="iosw")
+    iosw_secret = get_secrets(secret="iosw")
     current_table_id = config.ESSENTIAL_CONTACTS_CURRENT_TABLE
     info = get_sa_info("essential_contacts")
     bq_info = get_sa_info("bq")
@@ -128,7 +129,7 @@ def create_project(request: ProjectDetails, response: Response):
 @app.post("/create_group")
 def create_group(request: GroupDetails):
 
-    sa_info = get_secrets(engine="sa", secret="create_group")
+    sa_info = get_secrets(secret="create_group")
     creds = service_account.IDTokenCredentials.from_service_account_info(
         sa_info, target_audience=config.GROUP_CREATION_CLIENT_ID
     )
@@ -213,18 +214,9 @@ def set_project_iam_rights(request: SetIamDetails, response: Response):
         return {"message": "failed", "error": str(e.error_details)}
 
 
-@app.get("/set_cache")
-def set_cache():
-    get_secrets(engine="sa", secret="create_project")
-    get_secrets(engine="sa", secret="essential_contacts")
-    get_secrets(engine="sa", secret="bigquery_cotools_dev")
-
-
 @app.get("/get_folder_hierarchy")
 def get_folder_hierarchy():
-    bearer = get_secrets(engine="co-tools-secrets", secret="api_hierarchy")[
-        "token"
-    ]
+    bearer = get_secrets(secret="api_hierarchy")["token"]
     r = requests.get(
         url=config.HIERARCHY_URL,
         headers={"Authorization": f"Bearer {bearer}"},
@@ -303,7 +295,7 @@ def list_iam_history(project_id, interval: HistoricalIamDetails):
 
 @app.get("/basicat/{basicat}")
 def get_basicat_info(basicat: str):
-    secret = get_secrets(engine="co-tools-secrets", secret="iosw")
+    secret = get_secrets(secret="iosw")
     return basicatClient.get_basicat_info(
         secret["username"], secret["password"], basicat
     ).json()
