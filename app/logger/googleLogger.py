@@ -42,8 +42,6 @@ class GCPFormatter(logging.Formatter):
         if len(httpsrequest.keys()) > 0:
             log["httpRequest"] = httpsrequest
 
-        print(log)
-
         return log
 
 

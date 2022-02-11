@@ -12,7 +12,7 @@ class Label_map(BaseModel):
     project_family: Optional[str] = Field(alias="project-family")
     id_orange_carto: str = Field(alias="id-orange-carto")
     epic: Optional[str]
-    expiration_date: Optional[str] = Field(alias="expiration-date")
+    expiration_date: Optional[date] = Field(alias="expiration-date")
 
     class Config:
         arbitrary_types_allowed = True
