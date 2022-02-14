@@ -1,4 +1,5 @@
 from google.cloud.bigquery.client import Client
+from google.cloud.bigquery import SchemaField, LoadJobConfig
 from google.oauth2 import service_account
 
 
@@ -11,10 +12,21 @@ class BigQueryWrapper(Client):
     def __init__(self, service_account_info, *args, **kwargs):
         pass
 
-    def insert_data(self, table_id=None, rows=None):
+    def insert_data(self, table_id=None, rows=None, schema=None):
+        schema = [
+            SchemaField("email", "STRING"),
+            SchemaField("time", "DATETIME"),
+            SchemaField("project", "STRING"),
+            SchemaField("notificationCategory", "STRING"),
+            SchemaField("status", "STRING"),
+        ]
         table = self.get_table(table_id)
-        errors = self.load_table_from_json(json_rows=rows, destination=table)
-        return errors
+        job_config = LoadJobConfig()
+        job_config.schema = schema
+        job = self.load_table_from_json(
+            json_rows=rows, destination=table, job_config=job_config
+        )
+        return job.result()
 
     def delete_data(self, table_id=None, condition="1=1"):
         job = self.query(f"DELETE FROM `{table_id}` Where {condition};")
