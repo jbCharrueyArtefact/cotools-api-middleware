@@ -9,6 +9,7 @@ from app.lib.ressources.models import (
     HistoricalIamDetails,
 )
 from app.logger.logger import logger
+from google.auth.transport.requests import Request as GoogleRequest
 
 from fastapi import FastAPI, Request, Response, status
 import json
@@ -17,7 +18,7 @@ import requests
 from google.oauth2 import service_account
 from googleapiclient import discovery
 from app.lib.utils.iam import get_interval_historical_data
-from app.lib.utils.secret import get_secrets, get_sa_info
+from app.lib.utils.secret import get_sa_old, get_secrets, get_sa_info
 from app.lib.utils import basicatClient
 from app import config
 from app.lib.ressources.essentialContacts import (
@@ -117,7 +118,8 @@ def create_project(request: ProjectDetails, response: Response):
             table_id=current_table_id,
         )
 
-    except Exception:
+    except Exception as e:
+        print(e)
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {
             "message": "project created but ownership and accountability could not be set"
@@ -129,11 +131,11 @@ def create_project(request: ProjectDetails, response: Response):
 @app.post("/create_group")
 def create_group(request: GroupDetails):
 
-    sa_info = get_secrets(secret="create_group")
+    sa_info = get_sa_old(sa="create_group")
     creds = service_account.IDTokenCredentials.from_service_account_info(
         sa_info, target_audience=config.GROUP_CREATION_CLIENT_ID
     )
-    creds.refresh(Request())
+    creds.refresh(GoogleRequest())
     token = creds.token
 
     data = request.dict()

@@ -23,6 +23,23 @@ def get_secrets(secret):
 
 
 @lru_cache(maxsize=None)
+def get_sa_old(sa, engine="sa"):
+    client = hvac.Client(
+        url=config.VAULT,
+        namespace="vault-cotools",
+        verify="app/cert/cert.pem",
+    )
+    client.auth.ldap.login(
+        username=os.environ.get("VAULT_USERNAME"),
+        password=os.environ.get("VAULT_PASSWORD"),
+    )
+
+    a = client.read(path=f"/{engine}/data/{sa}")
+
+    return a["data"]["data"]
+
+
+@lru_cache(maxsize=None)
 def get_sa_info(sa):
     client = hvac.Client(
         url=config.SA_VAULT_URL,
