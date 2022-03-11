@@ -1,11 +1,13 @@
 from logging import exception
+from sys import maxsize
 import hvac
 from functools import lru_cache
 import os
 from app import config
+import cachetools.func
 
 
-@lru_cache(maxsize=None)
+@cachetools.func.ttl_cache(maxsize=128, ttl=10 * 60)
 def get_secrets(secret):
     client = hvac.Client(
         url=config.VAULT,
@@ -22,7 +24,7 @@ def get_secrets(secret):
     return a["data"]["data"]
 
 
-@lru_cache(maxsize=None)
+@cachetools.func.ttl_cache(maxsize=128, ttl=10 * 60)
 def get_sa_old(sa, engine="sa"):
     client = hvac.Client(
         url=config.VAULT,
@@ -39,7 +41,7 @@ def get_sa_old(sa, engine="sa"):
     return a["data"]["data"]
 
 
-@lru_cache(maxsize=None)
+@cachetools.func.ttl_cache(maxsize=128, ttl=10 * 60)
 def get_sa_info(sa):
     client = hvac.Client(
         url=config.SA_VAULT_URL,

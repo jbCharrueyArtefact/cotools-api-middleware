@@ -1,8 +1,7 @@
 import datetime
 
 from google.cloud.essential_contacts_v1.types.enums import NotificationCategory
-from app.lib.ressources.models import EssentialContact, EssentialContactList
-import json
+from app.models.essentialContacts import EssentialContact, EssentialContactList
 import time
 
 

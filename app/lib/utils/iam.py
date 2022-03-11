@@ -1,4 +1,4 @@
-from app.lib.ressources.models import HistoricalIamDetails
+from app.models.iam import HistoricalIamDetails
 from datetime import datetime
 
 

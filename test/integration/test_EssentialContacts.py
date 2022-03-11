@@ -1,6 +1,5 @@
 import pytest
-from app.lib.ressources.models import (
-    EssentialContactList,
+from app.models.essentialContacts import (
     EssentialContactListOut,
 )
 import json
@@ -40,7 +39,7 @@ def message(success=True):
 def test_get_essential_contact(
     expected_status_code, project_name, host, session
 ):
-    url = f"{host}/projects/{project_name}/essential_contacts"
+    url = f"{host}/projects/{project_name}/essential_contacts/"
     response = session.get(url=url)
     assert expected_status_code == response.status_code
     assert EssentialContactListOut(**response.json())
@@ -91,7 +90,7 @@ def test_patch_essential_contact(
     host,
     session,
 ):
-    url = f"{host}/projects/{project_name}/essential_contacts"
+    url = f"{host}/projects/{project_name}/essential_contacts/"
     response = session.patch(url, data=json.dumps(payload))
     expected = (expected_status_code, expected_response)
     result = (response.status_code, response.json())
@@ -114,7 +113,7 @@ def test_patch_essential_contact(
     ],
 )
 def test_change_working_patch(equal, project_name, payload, host, session):
-    url = f"{host}/projects/{project_name}/essential_contacts"
+    url = f"{host}/projects/{project_name}/essential_contacts/"
     session.patch(url, data=json.dumps(payload))
     response = session.get(url=url)
     if equal:
