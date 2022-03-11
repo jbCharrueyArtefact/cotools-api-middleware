@@ -1,6 +1,5 @@
 from google.cloud.bigquery.client import Client
 from google.cloud.bigquery import SchemaField, LoadJobConfig
-from google.oauth2 import service_account
 
 
 class BigQueryWrapper(Client):

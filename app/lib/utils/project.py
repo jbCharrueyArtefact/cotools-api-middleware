@@ -9,5 +9,8 @@ def create_name(request):
     workload = request.workload_details
     unicity = request.unicity_id
     env = request.env
-    name = f"{coutry}-{basicat}-{workload}-{unicity}-{env}"
+    if not unicity:
+        name = f"{coutry}-{basicat}-{workload}-{env}"
+    else:
+        name = f"{coutry}-{basicat}-{workload}-{unicity}-{env}"
     return name

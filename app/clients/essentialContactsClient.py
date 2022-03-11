@@ -1,30 +1,12 @@
 import json
-from logging import error
-
-from requests import Session
-from urllib.parse import urljoin
-from google.oauth2 import service_account
-from google.auth.transport.requests import Request
-import requests
-
-from app.lib.ressources.models import EssentialContact, EssentialContactList
+from app.lib.utils.googleRestApi import GoogleRestApi, httpErrorHandler
+from app.models.essentialContacts import EssentialContact, EssentialContactList
 
 
-def httpErrorHandler(func):
-    def wrapper(*args, **kwargs):
-        status_code, return_value = func(*args, **kwargs)
-        if status_code == 200:
-            return return_value
-        else:
-            raise Exception()
-
-    return wrapper
-
-
-class EssentialContactsClient:
+class EssentialContactsClient(GoogleRestApi):
     def __init__(self, sa_info):
 
-        self.session = _ApiSession(
+        super().__init__(
             sa_info, "https://essentialcontacts.googleapis.com/v1/"
         )
 
@@ -32,7 +14,6 @@ class EssentialContactsClient:
         response = self.session.get(url=f"projects/{project_id}/contacts")
         return response
 
-    #
     @httpErrorHandler
     def get_essentialContacts(self, project_id):
         response = self.session.get(url=f"projects/{project_id}/contacts")
@@ -102,25 +83,3 @@ class EssentialContactsClient:
         )
 
         return response.status_code, response.json
-
-
-class _ApiSession(Session):
-    def __init__(self, sa, prefix_url=None, *args, **kwargs):
-        super(_ApiSession, self).__init__(*args, **kwargs)
-        self.prefix_url = prefix_url
-
-        cred = service_account.Credentials.from_service_account_info(
-            sa,
-            scopes=["https://www.googleapis.com/auth/cloud-platform"],
-        )
-        cred.refresh(Request())
-        self.headers.update(
-            {
-                "Authorization": f"Bearer {cred.token}",
-                "Content-Type": "application/json; charset=utf-8",
-            }
-        )
-
-    def request(self, method, url, *args, **kwargs):
-        url = urljoin(self.prefix_url, url)
-        return super(_ApiSession, self).request(method, url, *args, **kwargs)

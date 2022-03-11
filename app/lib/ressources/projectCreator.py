@@ -1,14 +1,11 @@
 from googleapiclient import discovery
-from app.lib.ressources.essentialContacts import modify_essentialContacts
-from app.lib.ressources.models import (
-    EssentialContact,
-    EssentialContactList,
+from app.models.projects import (
     ProjectDetails,
 )
 from app.lib.utils.project import create_name
 
 
-def create_project_orange(request: ProjectDetails, credentials):
+def create_project_orange(request: ProjectDetails, client):
 
     name = create_name(request)
     parent = f"folders/{request.parent_folder_id}"
@@ -27,16 +24,10 @@ def create_project_orange(request: ProjectDetails, credentials):
     labels = labels1 | labels2
 
     return _create_project(
-        name=name, parent=parent, labels=labels, credentials=credentials
+        name=name, parent=parent, labels=labels, client=client
     )
 
 
-def _create_project(name, parent, labels, credentials):
+def _create_project(name, parent, labels, client):
 
-    client = discovery.build(
-        "cloudresourcemanager", "v3", credentials=credentials
-    )
-
-    body = {"project_id": name, "parent": parent, "labels": labels}
-    operation = client.projects().create(body=body).execute()
-    return operation, name
+    return client.create_project(name, parent, labels), name

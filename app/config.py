@@ -1,7 +1,8 @@
 import os
+from typing import Literal
 import dotenv
 
-ENV = os.environ.get("ENV", "DEV")
+ENV: Literal["ENV", "PPR", "PRD"] = os.environ.get("ENV", "DEV")
 
 if ENV == "PRD":
     dotenv.load_dotenv("./app/env/.prod")
@@ -29,10 +30,15 @@ SA_VAULT_PATH = f"ofr-fgt-backend-cotools/data/gcp/{ENV.lower()}/service-account
 SA_VAULT_URL = "https://area51-sophia.hbx.geo.francetelecom.fr/"
 SA_VAULT_NAMESPACE = "DLiCe"
 
+BILLING_ID = "0136C4-D63C36-ED132B"
+
 SA_NAMES = {
     "bq": "sa-ofr-fgt-bigquery",
     "create_project": "sa-ofr-fgt-create-project",
     "iam": "sa-ofr-fgt-iam",
     "essential_contacts": "sa-ofr-fgt-essential-contacts",
     "logging": "sa-ofr-fgt-logging-app",
+    "billing": "sa-ofr-fgt-billing-account",
 }
+
+SECRET = ["iosw"]
