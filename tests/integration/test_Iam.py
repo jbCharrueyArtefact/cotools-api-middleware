@@ -1,5 +1,6 @@
 import pytest
 import json
+from app.roles.roles import ProjectCreationRoles
 
 
 def create_payload():
@@ -7,10 +8,25 @@ def create_payload():
         "bindings": [
             {
                 "members": ["user:louis.rousselotdesaintceran.ext@orange.com"],
-                "role": "roles/bigquery.admin",
+                "role": ProjectCreationRoles.editor,
             }
         ]
     }
+    return data
+
+
+def create_payload_with_project_details_payload():
+    data = {
+        "details": {
+            "bindings": [
+                {
+                    "members": ["user:test.test.ext@test.com"],
+                    "role": ProjectCreationRoles.viewer,
+                }
+            ]
+        }
+    }
+
     return data
 
 
@@ -36,6 +52,12 @@ def test_get_iam(expected_status_code, project_id, session, host):
             "ofr-fgt-appcotools-1-dev",
             create_payload(),
         ),
+        pytest.param(
+            {"message": "success"},
+            200,
+            "ofr-fgt-appcotools-1-dev",
+            create_payload_with_project_details_payload(),
+        ),
     ],
 )
 def test_set_iam(
@@ -49,10 +71,8 @@ def test_set_iam(
     url = f"{host}/projects/{project_id}/iam/"
     payload2 = {"details": payload}
     response = session.patch(url=url, data=json.dumps(payload2))
-    assert (response.json(), response.status_code) == (
-        expected_response,
-        expected_status_code,
-    )
+    assert response.json() == expected_response
+    assert response.status_code == expected_status_code
 
 
 @pytest.mark.parametrize(

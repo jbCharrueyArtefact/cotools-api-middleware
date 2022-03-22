@@ -7,7 +7,7 @@ integration-tester:
     before_script:
       - export PYTHONPATH=.
     script:
-      - pytest test/integration/
+      - pytest tests/integration/
     allow_failure: false
     only:
       - merge_requests

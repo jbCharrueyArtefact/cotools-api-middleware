@@ -12,6 +12,7 @@ def modify_essentialContacts(
     db_client,
     current_table_id,
 ):
+
     existing_contacts = essConClient.get_essentialContacts(project_id)
 
     _update_essential_contacts_in_cloud(
@@ -24,11 +25,7 @@ def modify_essentialContacts(
 
 
 def create_essential_contact_from_list_email(
-    project_id,
-    mappings,
-    essConClient,
-    db_client,
-    table_id,
+    project_id, mappings, essConClient, db_client, table_id
 ):
     list_contact = []
     for mapping in mappings:

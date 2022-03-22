@@ -4,10 +4,7 @@ from logging.config import dictConfig
 import logging
 import json
 
-log_format_dict = {
-    "time": "%(asctime)s",
-    "message": "%(message)s",
-}
+log_format_dict = {"time": "%(asctime)s", "message": "%(message)s"}
 
 
 class _LogConfig(BaseModel):
@@ -43,7 +40,7 @@ class _LogConfig(BaseModel):
         },
     }
     loggers = {
-        "cotools_log": {"handlers": ["gcp", "default"], "level": LOG_LEVEL},
+        "cotools_log": {"handlers": ["gcp", "default"], "level": LOG_LEVEL}
     }
 
 

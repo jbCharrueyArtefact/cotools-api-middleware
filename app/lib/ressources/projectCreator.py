@@ -1,8 +1,7 @@
 from googleapiclient import discovery
-from app.models.projects import (
-    ProjectDetails,
-)
+from app.models.projects import ProjectDetails
 from app.lib.utils.project import create_name
+from app.roles.roles import ProjectCreationRoles
 
 
 def create_project_orange(request: ProjectDetails, client):
@@ -26,6 +25,18 @@ def create_project_orange(request: ProjectDetails, client):
     return _create_project(
         name=name, parent=parent, labels=labels, client=client
     )
+
+
+def set_iam_from_requests(iam_client, request, name):
+    policy = {
+        "bindings": [
+            {
+                "members": ["user:" + request.demandeur],
+                "role": ProjectCreationRoles.editor,
+            }
+        ]
+    }
+    iam_client.set_project_iam_rights(policy, name)
 
 
 def _create_project(name, parent, labels, client):

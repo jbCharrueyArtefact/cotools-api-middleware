@@ -10,9 +10,7 @@ import cachetools.func
 @cachetools.func.ttl_cache(maxsize=128, ttl=10 * 60)
 def get_secrets(secret):
     client = hvac.Client(
-        url=config.VAULT,
-        namespace="vault-cotools",
-        verify="app/cert/cert.pem",
+        url=config.VAULT, namespace="vault-cotools", verify="app/cert/cert.pem"
     )
     client.auth.ldap.login(
         username=os.environ.get("VAULT_USERNAME"),
@@ -27,9 +25,7 @@ def get_secrets(secret):
 @cachetools.func.ttl_cache(maxsize=128, ttl=10 * 60)
 def get_sa_old(sa, engine="sa"):
     client = hvac.Client(
-        url=config.VAULT,
-        namespace="vault-cotools",
-        verify="app/cert/cert.pem",
+        url=config.VAULT, namespace="vault-cotools", verify="app/cert/cert.pem"
     )
     client.auth.ldap.login(
         username=os.environ.get("VAULT_USERNAME"),
