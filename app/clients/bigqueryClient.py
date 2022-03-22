@@ -27,6 +27,12 @@ class BigQueryWrapper(Client):
         )
         return job.result()
 
+    # TODO - Verify the output of this function
+    def insert_stream_data(self, table_id=None, rows=None):
+        table = self.get_table(table_id)
+        errors = self.insert_rows(table, rows)
+        return errors
+
     def delete_data(self, table_id=None, condition="1=1"):
         job = self.query(f"DELETE FROM `{table_id}` Where {condition};")
         return job.result()

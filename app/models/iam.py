@@ -3,8 +3,13 @@ from datetime import date
 from pydantic import BaseModel
 
 
+class Binding(BaseModel):
+    members: List[str]
+    role: str
+
+
 class Policy(BaseModel):
-    bindings: Optional[List[Dict]] = []
+    bindings: Optional[List[Binding]] = []
 
 
 class SetIamDetails(BaseModel):

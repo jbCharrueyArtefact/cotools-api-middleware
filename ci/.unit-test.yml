@@ -4,7 +4,7 @@ unit-tester:
   before_script:
       - export PYTHONPATH=.
   script:
-    - pytest test/unit/
+    - pytest tests/unit/
   allow_failure: false
   except:
     - develop

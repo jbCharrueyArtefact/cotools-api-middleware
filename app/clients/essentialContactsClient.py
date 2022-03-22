@@ -32,8 +32,7 @@ class EssentialContactsClient(GoogleRestApi):
             "languageTag": "en",
         }
         response = self.session.post(
-            url=f"projects/{project_id}/contacts",
-            data=json.dumps(sentData),
+            url=f"projects/{project_id}/contacts", data=json.dumps(sentData)
         )
         return response.status_code, response.json()
 
@@ -63,9 +62,7 @@ class EssentialContactsClient(GoogleRestApi):
     @httpErrorHandler
     def _del_essential_contact_by_id(self, contact_id):
 
-        response = self.session.delete(
-            url=f"{contact_id}",
-        )
+        response = self.session.delete(url=f"{contact_id}")
         return response.status_code, response.json
 
     @httpErrorHandler
@@ -78,8 +75,7 @@ class EssentialContactsClient(GoogleRestApi):
             "languageTag": "en",
         }
         response = self.session.patch(
-            url=f"{contact_id}",
-            data=json.dumps(sentData),
+            url=f"{contact_id}", data=json.dumps(sentData)
         )
 
         return response.status_code, response.json

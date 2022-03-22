@@ -28,8 +28,7 @@ class _ApiSession(Session):
         self.prefix_url = prefix_url
 
         cred = service_account.Credentials.from_service_account_info(
-            sa,
-            scopes=["https://www.googleapis.com/auth/cloud-platform"],
+            sa, scopes=["https://www.googleapis.com/auth/cloud-platform"]
         )
         cred.refresh(Request())
         self.headers.update(

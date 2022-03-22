@@ -20,7 +20,7 @@ def env():
 
 @pytest.fixture(scope="session")
 def config(env):
-    with open("./test/integration/config.json") as conf:
+    with open("./tests/integration/config.json") as conf:
         config = json.load(conf)
     return config.get(env)
 

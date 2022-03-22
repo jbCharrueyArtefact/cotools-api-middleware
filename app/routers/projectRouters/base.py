@@ -4,21 +4,19 @@ from app.dependencies import (
     get_bq_client,
     get_essential_contact_client,
     get_project_client,
+    get_iam_client,
 )
 from app.lib.utils.customRoute import CustomRoute
-from app.models.projects import (
-    ProjectDetails,
-)
+from app.models.projects import ProjectDetails
 from app.lib.ressources.projectCreator import create_project_orange
-from google.oauth2 import service_account
-from app.lib.utils.secret import get_secrets, get_sa_info
-from app.clients import basicatClient
 from app import config
 from app.lib.ressources.essentialContacts import (
     create_essential_contact_from_list_email,
     wait_essential_contacts_disponibility,
 )
-
+from app.clients import basicatClient
+from app.lib.ressources.projectCreator import set_iam_from_requests
+from app.lib.utils.secret import get_secrets
 
 subrouter = APIRouter(
     route_class=CustomRoute,
@@ -44,9 +42,10 @@ def create_project(
     request: ProjectDetails,
     response: Response,
     bqclient=Depends(get_bq_client),
-    essentialContactsClient=Depends(get_essential_contact_client),
-    billingClient=Depends(get_billing_client),
-    projectClient=Depends(get_project_client),
+    essential_contacts_client=Depends(get_essential_contact_client),
+    billing_client=Depends(get_billing_client),
+    project_client=Depends(get_project_client),
+    iam_client=Depends(get_iam_client),
 ):
     iosw_secret = get_secrets(secret="iosw")
     current_table_id = config.ESSENTIAL_CONTACTS_CURRENT_TABLE
@@ -61,22 +60,23 @@ def create_project(
         }
     try:
         response_create, name = create_project_orange(
-            request=request, client=projectClient
+            request=request, client=project_client
         )
     except Exception as e:
         print(e)
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"message": "project could not be created"}
-    wait_essential_contacts_disponibility(essentialContactsClient, name)
+    wait_essential_contacts_disponibility(essential_contacts_client, name)
 
     if config.ENV == "PRD":
         try:
-            billingClient.set_billing_account(name, config.BILLING_ID)
+            billing_client.set_billing_account(name, config.BILLING_ID)
         except Exception:
             response.status_code = status.HTTP_400_BAD_REQUEST
             return {"message": "billing account could not be associated"}
 
     try:
+
         mappings = [
             {"emails": request.label_map.accountable, "category": "TECHNICAL"},
             {"emails": request.label_map.project_owner, "category": "ALL"},
@@ -85,10 +85,11 @@ def create_project(
         create_essential_contact_from_list_email(
             project_id=name,
             mappings=mappings,
-            essConClient=essentialContactsClient,
+            essConClient=essential_contacts_client,
             db_client=bqclient,
             table_id=current_table_id,
         )
+        set_iam_from_requests(iam_client, request, name)
 
     except Exception:
         response.status_code = status.HTTP_400_BAD_REQUEST

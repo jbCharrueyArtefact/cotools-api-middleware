@@ -10,18 +10,12 @@ from app.models.essentialContacts import (
 from app.lib.utils.secret import get_sa_info
 
 from app import config
-from app.lib.ressources.essentialContacts import (
-    modify_essentialContacts,
-)
+from app.lib.ressources.essentialContacts import modify_essentialContacts
 
 subrouter = APIRouter(route_class=CustomRoute)
 
 
-@subrouter.get(
-    "/",
-    response_model=EssentialContactListOut,
-    status_code=200,
-)
+@subrouter.get("/", response_model=EssentialContactListOut, status_code=200)
 def get_essential_contacts(
     project_id: str,
     response: Response,
