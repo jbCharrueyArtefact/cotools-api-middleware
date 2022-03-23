@@ -14,6 +14,12 @@ VAULT_PATH = f"co-tools-secrets/data/{ENV.lower()}"
 
 PROJET = f"ofr-fgt-backend-cotools-{ENV.lower()}"
 
+# ajouté
+AUTH_METHOD = os.getenv("AUTH_METHOD", "vault")
+SA_VAULT_DLICE_PATH = f"ofr-fgt-shared-data/data/gcp/{ENV.lower()}/service-account/applicative_deployment"
+DOMAIN = "orange.com"
+# PROJECT_NAME = f"ofr-fgt-shared-data-{ENV}"
+
 GROUP_CREATION_CLIENT_ID = (
     "498329607286-7mq34redtdhq8niqr3f6mq2i58eshus6.apps.googleusercontent.com"
 )
@@ -39,6 +45,7 @@ SA_NAMES = {
     "essential_contacts": "sa-ofr-fgt-essential-contacts",
     "logging": "sa-ofr-fgt-logging-app",
     "billing": "sa-ofr-fgt-billing-account",
+    "google_groups_assets": "sa-ofr-fgt-assetggroups-viewer",
 }
 
 SECRET = ["iosw"]
