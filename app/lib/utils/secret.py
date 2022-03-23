@@ -5,6 +5,7 @@ from functools import lru_cache
 import os
 from app import config
 import cachetools.func
+from google.oauth2 import service_account
 
 
 @cachetools.func.ttl_cache(maxsize=128, ttl=10 * 60)
@@ -54,3 +55,24 @@ def get_sa_info(sa):
         path=f"{config.SA_VAULT_PATH}{config.SA_NAMES.get(sa)}"
     )
     return secret["data"]["data"]
+
+
+@cachetools.func.ttl_cache(maxsize=128, ttl=10 * 60)
+def get_sa_info_from_shared_data_vault(sa):
+    client = hvac.Client(
+        url=config.SA_VAULT_URL,
+        namespace=config.SA_VAULT_NAMESPACE,
+        verify="app/cert/cert.pem",
+    )
+
+    client.auth.approle.login(
+        role_id=os.environ.get("SHARED_DATA_ROLE_ID"),
+        secret_id=os.environ.get("SHARED_DATA_SECRET_ID"),
+    )
+
+    secret = client.read(
+        path=f"{config.SA_VAULT_DLICE_PATH}/{config.SA_NAMES.get(sa)}"
+    )
+    return service_account.Credentials.from_service_account_info(
+        secret["data"]["data"]
+    )

@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from typing import List
+import re
 
 
 class GroupDetails(BaseModel):
@@ -6,3 +8,9 @@ class GroupDetails(BaseModel):
     description: str
     mail: str
     manager: str
+    ## ajouté
+    groups: List[str]
+
+
+class GroupDetailsFromUsers(BaseModel):
+    users: List[str]
