@@ -48,6 +48,7 @@ class GCPFormatter(logging.Formatter):
 class GoogleLogger(CloudLoggingHandler):
     def __init__(self):
         client = Client(project=PROJET, credentials=credentials)
+        client._use_grpc = False
         super(GoogleLogger, self).__init__(client)
 
     def emit(self, record):
