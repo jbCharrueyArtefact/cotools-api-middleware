@@ -1,3 +1,4 @@
+import json
 from typing import Callable
 
 from fastapi import Request, Response
@@ -32,6 +33,7 @@ class CustomRoute(APIRoute):
             if response.status_code == 200:
                 logger.info(msg=msg)
             else:
+                msg["body"] = json.loads(response.body)
                 logger.error(msg=msg)
 
             return response
