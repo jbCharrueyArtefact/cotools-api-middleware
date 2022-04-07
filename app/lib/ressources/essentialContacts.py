@@ -123,7 +123,7 @@ def _update_db(
 
     if len(rows) > 0:
 
-        return db_client.insert_data(
+        return db_client.insert_stream_data(
             current_table_id, _mydatetimeconverter(rows, "time")
         )
 

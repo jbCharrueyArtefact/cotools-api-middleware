@@ -28,7 +28,7 @@ HIERARCHY_URL = "https://gitlab.si.francetelecom.fr/api/v4/projects/24016/jobs/a
 REFERENCE_TABLE_IAM_HISTORY = (
     f"{PROJET}.fgt_backend_cotools_iam_{ENV.lower()}.view_iam"
 )
-ESSENTIAL_CONTACTS_CURRENT_TABLE = f"{PROJET}.fgt_backend_cotools_audit_{ENV.lower()}.raw_fact_auditessentialcontactcurrent_t"
+ESSENTIAL_CONTACTS_CURRENT_TABLE = f"{PROJET}.fgt_backend_cotools_audit_{ENV.lower()}.raw_fact_auditessentialcontactfromui_t"
 ESSENTIAL_CONTACTS_CURRENT_VIEW = f"{PROJET}.fgt_backend_cotools_audit_{ENV.lower()}.view_essentialcontact_current"
 
 URL_IOSW = os.environ.get("IOSW_URL")
