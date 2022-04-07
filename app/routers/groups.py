@@ -6,7 +6,11 @@ import json
 import requests
 from google.auth.transport.requests import Request as GoogleRequest
 from google.oauth2 import service_account
-from app.lib.utils.secret import get_sa_info_from_shared_data_vault, get_sa_old
+from app.lib.utils.secret import (
+    get_sa_info,
+    get_sa_info_from_shared_data_vault,
+    get_sa_old,
+)
 from app.clients.bigqueryClient import BigQueryWrapper
 from app import config
 from typing import List
@@ -16,8 +20,7 @@ router = APIRouter(prefix="/groups", tags=["group"], route_class=CustomRoute)
 
 @router.post("/")
 def create_group(request: GroupDetails):
-
-    sa_info = get_sa_old(sa="create_group")
+    sa_info = get_sa_info(sa="group_creation")
     creds = service_account.IDTokenCredentials.from_service_account_info(
         sa_info, target_audience=config.GROUP_CREATION_CLIENT_ID
     )

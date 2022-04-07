@@ -46,6 +46,7 @@ SA_NAMES = {
     "logging": "sa-ofr-fgt-logging-app",
     "billing": "sa-ofr-fgt-billing-account",
     "google_groups_assets": "sa-ofr-fgt-assetggroups-viewer",
+    "group_creation": "sa-ofr-group-creation",
 }
 
 SECRET = ["iosw"]

@@ -9,7 +9,7 @@ class GroupDetails(BaseModel):
     mail: str
     manager: str
     ## ajouté
-    groups: List[str]
+    # groups: List[str]
 
 
 class GroupDetailsFromUsers(BaseModel):
