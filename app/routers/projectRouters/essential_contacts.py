@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import HTTPException
+from fastapi import APIRouter, Depends, Response
 from app.dependencies import get_bq_client, get_essential_contact_client
 from app.lib.utils.customRoute import CustomRoute
 
@@ -6,11 +7,14 @@ from app.models.essentialContacts import (
     EssentialContactList,
     EssentialContactListOut,
 )
-
-from app.lib.utils.secret import get_sa_info
+from app.lib.utils.custom_error_handling import (
+    CustomEssentialContactException,
+)
 
 from app import config
-from app.lib.ressources.essentialContacts import modify_essentialContacts
+from app.lib.ressources.essentialContacts import (
+    modify_essential_contacts as modify_contact,
+)
 
 subrouter = APIRouter(route_class=CustomRoute)
 
@@ -22,11 +26,12 @@ def get_essential_contacts(
     essentialContactsClient=Depends(get_essential_contact_client),
 ):
     try:
-        a = essentialContactsClient.get_essentialContacts(project_id)
-        return a
-    except Exception:
-        response.status_code = status.HTTP_404_NOT_FOUND
-        return EssentialContactListOut(**{})
+        return essentialContactsClient.get_essential_contacts_client(
+            project_id
+        )
+    except CustomEssentialContactException as e:
+        response.status_code = e.status_code
+        raise HTTPException(status_code=e.status_code, detail=e.message)
 
 
 @subrouter.patch("/", status_code=200)
@@ -40,7 +45,7 @@ def modify_essential_contacts(
 
     current_table_id = config.ESSENTIAL_CONTACTS_CURRENT_TABLE
     try:
-        modify_essentialContacts(
+        modify_contact(
             project_id=project_id,
             essConClient=essentialContactsClient,
             data=data,
@@ -48,6 +53,6 @@ def modify_essential_contacts(
             current_table_id=current_table_id,
         )
         return {"message": "success"}
-    except Exception:
-        response.status_code = status.HTTP_404_NOT_FOUND
-        return {"message": "failed"}
+    except CustomEssentialContactException as e:
+        response.status_code = e.status_code
+        raise HTTPException(status_code=e.status_code, detail=e.message)

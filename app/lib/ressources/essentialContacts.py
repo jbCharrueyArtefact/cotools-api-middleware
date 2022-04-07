@@ -5,7 +5,7 @@ from app.models.essentialContacts import EssentialContact, EssentialContactList
 import time
 
 
-def modify_essentialContacts(
+def modify_essential_contacts(
     project_id,
     essConClient,
     data: EssentialContactList,
@@ -13,8 +13,7 @@ def modify_essentialContacts(
     current_table_id,
 ):
 
-    existing_contacts = essConClient.get_essentialContacts(project_id)
-
+    existing_contacts = essConClient.get_essential_contacts_client(project_id)
     _update_essential_contacts_in_cloud(
         project_id, essConClient, data, existing_contacts
     )
@@ -36,7 +35,7 @@ def create_essential_contact_from_list_email(
             )
             list_contact.append(essContacte)
 
-    return modify_essentialContacts(
+    return modify_essential_contacts(
         project_id=project_id,
         essConClient=essConClient,
         data=EssentialContactList(essentialContacts=list_contact),
@@ -82,12 +81,12 @@ def _create_or_patch_essential_contacts(
     for contact in data.essentialContacts:
 
         if contact.email in existing_contact_email:
-            essConClient.patch_essentialContact(
+            essConClient.patch_essential_contact(
                 project_id, contact.email, data=contact
             )
 
         else:
-            essConClient.create_essentialContacts(
+            essConClient.create_essential_contacts_client(
                 project_id=project_id, data=contact
             )
 
