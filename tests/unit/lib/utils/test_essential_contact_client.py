@@ -17,10 +17,11 @@ contacts_fixture = {"contacts": [contact_fixture]}
 
 
 class EssentialContactsTest(unittest.TestCase):
+    @patch("app.lib.utils.googleRestApi.GoogleRestApi.__init__")
     @patch("app.clients.essentialContactsClient.service_account")
     @patch("app.clients.essentialContactsClient.essential_contacts_v1")
     def test_list_contacts_throw_permission_denied_exception(
-        self, essential_contacts_v1, service_account
+        self, essential_contacts_v1, service_account, super_init
     ):
         # Given
         essential_contacts_v1.EssentialContactsServiceClient.return_value.list_contacts.side_effect = PermissionDenied(
@@ -39,10 +40,11 @@ class EssentialContactsTest(unittest.TestCase):
         )
         assert e.value.status_code == 403
 
+    @patch("app.lib.utils.googleRestApi.GoogleRestApi.__init__")
     @patch("app.clients.essentialContactsClient.service_account")
     @patch("app.clients.essentialContactsClient.essential_contacts_v1")
     def test_create_contact_throw_value_error(
-        self, essential_contacts_v1, service_account
+        self, essential_contacts_v1, service_account, super_init
     ):
         # Given
         essential_contacts_v1.EssentialContactsServiceClient.return_value.create_contact.side_effect = ValueError(
@@ -60,10 +62,11 @@ class EssentialContactsTest(unittest.TestCase):
         assert e.value.message == "Value Error from Essential Contact client"
         assert e.value.status_code == 500
 
+    @patch("app.lib.utils.googleRestApi.GoogleRestApi.__init__")
     @patch("app.clients.essentialContactsClient.service_account")
     @patch("app.clients.essentialContactsClient.essential_contacts_v1")
     def test_create_contact_throw_permission_denied_error(
-        self, essential_contacts_v1, service_account
+        self, essential_contacts_v1, service_account, super_init
     ):
         # Given
         essential_contacts_v1.EssentialContactsServiceClient.return_value.create_contact.side_effect = PermissionDenied(
@@ -84,10 +87,11 @@ class EssentialContactsTest(unittest.TestCase):
         )
         assert e.value.status_code == 403
 
+    @patch("app.lib.utils.googleRestApi.GoogleRestApi.__init__")
     @patch("app.clients.essentialContactsClient.service_account")
     @patch("app.clients.essentialContactsClient.essential_contacts_v1")
     def test_delete_contact_throw_permission_denied_error(
-        self, essential_contacts_v1, service_account
+        self, essential_contacts_v1, service_account, super_init
     ):
         # Given
         essential_contacts_v1.EssentialContactsServiceClient.return_value.delete_contact.side_effect = PermissionDenied(
@@ -106,10 +110,11 @@ class EssentialContactsTest(unittest.TestCase):
         )
         assert e.value.status_code == 403
 
+    @patch("app.lib.utils.googleRestApi.GoogleRestApi.__init__")
     @patch("app.clients.essentialContactsClient.service_account")
     @patch("app.clients.essentialContactsClient.essential_contacts_v1")
     def test_patch_contact_throw_permission_denied_error(
-        self, essential_contacts_v1, service_account
+        self, essential_contacts_v1, service_account, super_init
     ):
         # Given
         essential_contacts_v1.EssentialContactsServiceClient.return_value.update_contact.side_effect = PermissionDenied(

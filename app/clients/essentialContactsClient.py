@@ -10,9 +10,9 @@ from google.api_core.exceptions import PermissionDenied
 
 class EssentialContactsClient(GoogleRestApi):
     def __init__(self, sa_info):
-        # super().__init__(
-        #     sa_info, "https://essentialcontacts.googleapis.com/v1/"
-        # )
+        super().__init__(
+            sa_info, "https://essentialcontacts.googleapis.com/v1/"
+        )
         credentials = service_account.Credentials.from_service_account_info(
             sa_info,
             scopes=["https://www.googleapis.com/auth/cloud-platform"],
