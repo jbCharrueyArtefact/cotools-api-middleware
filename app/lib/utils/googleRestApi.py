@@ -2,16 +2,21 @@ from requests import Session
 from urllib.parse import urljoin
 from google.oauth2 import service_account
 from google.auth.transport.requests import Request
+from fastapi import HTTPException
+
+from googleapiclient.errors import HttpError
 
 
 def httpErrorHandler(func):
     def wrapper(*args, **kwargs):
         status_code, return_value = func(*args, **kwargs)
-        print(return_value)
         if status_code == 200:
             return return_value
         else:
-            raise Exception()
+            raise HTTPException(
+                status_code=status_code,
+                detail=return_value["error"]["message"],
+            )
 
     return wrapper
 

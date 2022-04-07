@@ -14,9 +14,10 @@ from app.lib.ressources.essentialContacts import (
     create_essential_contact_from_list_email,
     wait_essential_contacts_disponibility,
 )
-from app.clients import basicatClient
+from app.roles.ProjectCreationRoles import ProjectCreationRoles
 from app.lib.ressources.projectCreator import set_iam_from_requests
-from app.lib.utils.secret import get_secrets
+
+from app.lib.utils.custom_error_handling import CustomBaseException
 
 subrouter = APIRouter(
     route_class=CustomRoute,
@@ -47,36 +48,30 @@ def create_project(
     project_client=Depends(get_project_client),
     iam_client=Depends(get_iam_client),
 ):
-    iosw_secret = get_secrets(secret="iosw")
+    # iosw_secret = get_secrets(secret="iosw")
     current_table_id = config.ESSENTIAL_CONTACTS_CURRENT_TABLE
 
-    response_basicat = basicatClient.get_basicat_info(
-        iosw_secret["username"], iosw_secret["password"], request.basicat
+    # response_basicat = basicatClient.get_basicat_info(
+    #     iosw_secret["username"], iosw_secret["password"], request.basicat
+    # )
+    # if response_basicat.status_code != 200:
+    #     response.status_code = status.HTTP_404_NOT_FOUND
+    #     return {
+    #         "message": f"No application found for basicat :{request.basicat}",
+    #     }
+
+    response_create, name = create_project_orange(
+        request=request, client=project_client
     )
-    if response_basicat.status_code != 200:
-        response.status_code = status.HTTP_404_NOT_FOUND
-        return {
-            "message": f"No application found for basicat :{request.basicat}",
-        }
-    try:
-        response_create, name = create_project_orange(
-            request=request, client=project_client
-        )
-    except Exception as e:
-        print(e)
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"message": "project could not be created"}
+
     wait_essential_contacts_disponibility(essential_contacts_client, name)
 
     if config.ENV == "PRD":
-        try:
-            billing_client.set_billing_account(name, config.BILLING_ID)
-        except Exception:
-            response.status_code = status.HTTP_400_BAD_REQUEST
-            return {"message": "billing account could not be associated"}
+        billing_client.set_billing_account(name, config.BILLING_ID)
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"message": "billing account could not be associated"}
 
     try:
-
         mappings = [
             {"emails": request.label_map.accountable, "category": "TECHNICAL"},
             {"emails": request.label_map.project_owner, "category": "ALL"},
@@ -89,12 +84,17 @@ def create_project(
             db_client=bqclient,
             table_id=current_table_id,
         )
-        set_iam_from_requests(iam_client, request, name)
+        list_roles = [
+            ProjectCreationRoles.projectIamAdmin,
+            ProjectCreationRoles.serviceUsageAdmin,
+        ]
 
-    except Exception:
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return {
-            "message": "project created but ownership and accountability could not be set"
-        }
+        set_iam_from_requests(iam_client, request, name, list_roles)
+    except CustomBaseException as e:
+        response.status_code = e.status_code
+        return {"message": e.message}
+    except Exception as e:
+        response.status_code = 500
+        return {"message": str(e)}
 
     return {"message": "project created"}

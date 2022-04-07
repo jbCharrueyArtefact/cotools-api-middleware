@@ -1,30 +1,22 @@
 import pytest
 import json
-from app.roles.roles import ProjectCreationRoles
+from app.roles.ProjectCreationRoles import ProjectCreationRoles
+
+test_user = "user:louis.rousselotdesaintceran.ext@orange.com"
+test_service_account = (
+    "serviceAccount:196576718626-compute@developer.gserviceaccount.com"
+)
+test_group_user = "group:gcp-ofr-FGT-test-cotools-tests-dev-dev@orange.com"
 
 
-def create_payload():
+def create_payload(user, role):
     data = {
         "bindings": [
             {
-                "members": ["user:louis.rousselotdesaintceran.ext@orange.com"],
-                "role": ProjectCreationRoles.editor,
+                "members": [user],
+                "role": role,
             }
         ]
-    }
-    return data
-
-
-def create_payload_with_project_details_payload():
-    data = {
-        "details": {
-            "bindings": [
-                {
-                    "members": ["user:test.test.ext@test.com"],
-                    "role": ProjectCreationRoles.viewer,
-                }
-            ]
-        }
     }
 
     return data
@@ -34,7 +26,8 @@ def create_payload_with_project_details_payload():
     ["expected_status_code", "project_id"],
     [
         (200, "ofr-fgt-appcotools-1-dev"),
-        pytest.param(404, "fake"),
+        (403, "fake"),
+        (403, "nautilus-sandbox-268214"),
     ],
 )
 def test_get_iam(expected_status_code, project_id, session, host):
@@ -50,13 +43,78 @@ def test_get_iam(expected_status_code, project_id, session, host):
             {"message": "success"},
             200,
             "ofr-fgt-appcotools-1-dev",
-            create_payload(),
+            create_payload(test_user, ProjectCreationRoles.editor),
         ),
         pytest.param(
             {"message": "success"},
             200,
             "ofr-fgt-appcotools-1-dev",
-            create_payload_with_project_details_payload(),
+            create_payload(test_group_user, ProjectCreationRoles.editor),
+        ),
+        pytest.param(
+            {"message": "success"},
+            200,
+            "ofr-fgt-appcotools-1-dev",
+            create_payload(test_service_account, ProjectCreationRoles.editor),
+        ),
+        pytest.param(
+            {
+                "message": "User fake_user@orange.com does not exist. from Iam Management client"
+            },
+            400,
+            "ofr-fgt-appcotools-1-dev",
+            create_payload(
+                "user:fake_user@orange.com", ProjectCreationRoles.editor
+            ),
+        ),
+        pytest.param(
+            {
+                "message": "User louis.rousselotdesaintceran.ext@artefact.com does not exist. from Iam Management client"
+            },
+            400,
+            "ofr-fgt-appcotools-1-dev",
+            create_payload(
+                "user:louis.rousselotdesaintceran.ext@artefact.com",
+                ProjectCreationRoles.editor,
+            ),
+        ),
+        pytest.param(
+            {
+                "message": "Request contains an invalid argument. from Iam Management client"
+            },
+            400,
+            "fake_project",
+            create_payload(test_user, ProjectCreationRoles.editor),
+        ),
+        pytest.param(
+            {
+                "message": "Role (roles/servicemanagement.serviceConsumer) does not exist in the resource's hierarchy. from Iam Management client"
+            },
+            400,
+            "ofr-fgt-appcotools-1-dev",
+            create_payload(
+                test_user, ProjectCreationRoles.serviceManagementConsumer
+            ),
+        ),
+        pytest.param(
+            {
+                "detail": [
+                    {
+                        "loc": ["body", "details"],
+                        "msg": "value is not a valid dict",
+                        "type": "type_error.dict",
+                    }
+                ]
+            },
+            422,
+            "ofr-fgt-appcotools-1-dev",
+            json.dumps("This is a fake json to throw an error"),
+        ),
+        pytest.param(
+            {"message": "success"},
+            200,
+            "ofr-fgt-appcotools-1-dev",
+            create_payload(test_user, ProjectCreationRoles.viewer),
         ),
     ],
 )
@@ -78,8 +136,16 @@ def test_set_iam(
 @pytest.mark.parametrize(
     ["equal", "project_id", "payload"],
     [
-        pytest.param(True, "ofr-fgt-appcotools-1-dev", create_payload()),
-        pytest.param(False, "fake", create_payload()),
+        pytest.param(
+            True,
+            "ofr-fgt-appcotools-1-dev",
+            create_payload(test_user, ProjectCreationRoles.editor),
+        ),
+        pytest.param(
+            False,
+            "fake",
+            create_payload(test_user, ProjectCreationRoles.editor),
+        ),
     ],
 )
 def test_iam_changed(equal, project_id, payload, session, host):

@@ -1,7 +1,11 @@
+from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
 from googleapiclient import discovery
-from fastapi import Response, status
 
+from app.lib.utils.custom_error_handling import (
+    CustomIamManagementException,
+    CustomIamManagementError,
+)
 from app.lib.utils.googleRestApi import GoogleRestApi
 
 
@@ -22,18 +26,22 @@ class IamClient(GoogleRestApi):
                 resource=project_id, body=body
             ).execute(num_retries=5)
             return {"message": "success"}
-        except Exception:
-            raise Exception
+        except ConnectionError as e:
+            raise CustomIamManagementException(e.args[0])
+        except HttpError as e:
+            raise CustomIamManagementError(e.error_details, e.status_code)
+        except Exception as e:
+            raise CustomIamManagementException(e.args[0])
 
-    def get_project_iam_rights(self, project_id: str, response: Response):
-
+    def get_project_iam_rights(self, project_id: str):
         try:
-            return_value = (
+            response = (
                 self.service.projects()
                 .getIamPolicy(resource=project_id, body={})
                 .execute(num_retries=5)
             )
-            return return_value
-        except Exception:
-            response.status_code = status.HTTP_404_NOT_FOUND
-            return {}
+            return response
+        except HttpError as e:
+            raise CustomIamManagementError(e.error_details, e.status_code)
+        except Exception as e:
+            raise CustomIamManagementException(e.args[0])

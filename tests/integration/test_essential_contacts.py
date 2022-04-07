@@ -7,9 +7,13 @@ import random
 import string
 
 
-def create_payload(cat):
+def create_payload(cat, fixed_user=False):
     letters = string.ascii_lowercase
-    random1 = "".join(random.choice(letters) for i in range(10))
+    random1 = (
+        "".join(random.choice(letters) for i in range(10))
+        if not fixed_user
+        else "test.test"
+    )
     data = {
         "contacts": [
             {
@@ -21,19 +25,20 @@ def create_payload(cat):
     return data
 
 
-def message(success=True):
-    if success:
-        message = "success"
-    else:
-        message = "failed"
-    return {"message": f"{message}"}
+def message(error_code=200):
+    return {
+        200: {"message": "success"},
+        403: {
+            "detail": "The caller does not have permission from Essential Contact client"
+        },
+    }[error_code]
 
 
 @pytest.mark.parametrize(
     "expected_status_code, project_name",
     [
         (200, "ofr-fgt-appcotools-1-dev"),  # good project
-        pytest.param(404, "fake"),  # bad project
+        pytest.param(403, "fake"),  # bad project
     ],
 )
 def test_get_essential_contact(
@@ -47,35 +52,42 @@ def test_get_essential_contact(
 
 @pytest.mark.parametrize(
     [
-        "expected_response",
         "expected_status_code",
         "project_name",
         "payload",
     ],
     [
         pytest.param(
-            message(True),
+            200,
+            "ofr-fgt-appcotools-1-dev",
+            create_payload(["ALL"], True),
+            # marks=pytest.mark.xfail,
+        ),  # all good
+        pytest.param(
+            200,
+            "ofr-fgt-appcotools-1-dev",
+            create_payload(["LEGAL"], True),
+            # marks=pytest.mark.xfail,
+        ),  # all good
+        pytest.param(
             200,
             "ofr-fgt-appcotools-1-dev",
             create_payload(["ALL"]),
             # marks=pytest.mark.xfail,
         ),  # all good
         pytest.param(
-            message(False),
-            404,
+            403,
             "fake",
             create_payload(["ALL"]),  # marks=pytest.mark.xfail
         ),  # bad project good payload
         pytest.param(
-            message(False),
-            404,
+            403,
             "ofr-fgt-app-cotools-1-dev",
             create_payload(["ALL"]),
-            #
+            # a regarder
         ),  # good project bad payload
         pytest.param(
-            message(False),
-            404,
+            403,
             "ofr-fgt-app-cotools-1-dev",
             create_payload(["FAKE"]),
             # marks=pytest.mark.xfail,
@@ -83,7 +95,6 @@ def test_get_essential_contact(
     ],
 )
 def test_patch_essential_contact(
-    expected_response,
     expected_status_code,
     project_name,
     payload,
@@ -92,7 +103,7 @@ def test_patch_essential_contact(
 ):
     url = f"{host}/projects/{project_name}/essential_contacts/"
     response = session.patch(url, data=json.dumps(payload))
-    expected = (expected_status_code, expected_response)
+    expected = (expected_status_code, message(expected_status_code))
     result = (response.status_code, response.json())
     assert expected == result
 

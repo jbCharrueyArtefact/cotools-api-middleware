@@ -1,11 +1,10 @@
-from googleapiclient import discovery
+from fastapi import HTTPException
+
 from app.models.projects import ProjectDetails
 from app.lib.utils.project import create_name
-from app.roles.roles import ProjectCreationRoles
 
 
 def create_project_orange(request: ProjectDetails, client):
-
     name = create_name(request)
     parent = f"folders/{request.parent_folder_id}"
     labels1 = request.label_map.dict(
@@ -27,15 +26,16 @@ def create_project_orange(request: ProjectDetails, client):
     )
 
 
-def set_iam_from_requests(iam_client, request, name):
-    policy = {
-        "bindings": [
+def set_iam_from_requests(iam_client, request, name, roles):
+    roles_list = []
+    for role in roles:
+        roles_list.append(
             {
                 "members": ["user:" + request.demandeur],
-                "role": ProjectCreationRoles.editor,
+                "role": role,
             }
-        ]
-    }
+        )
+    policy = {"bindings": roles_list}
     iam_client.set_project_iam_rights(policy, name)
 
 

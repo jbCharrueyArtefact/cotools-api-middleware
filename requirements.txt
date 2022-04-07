@@ -1,11 +1,13 @@
 cachetools
 fastapi
 gitpython
+google-api-core
 google-api-python-client
 google-auth
 google-auth-httplib2
 google-cloud-bigquery
-google-cloud-essential-contacts
+google-cloud-billing
+google-cloud-essential-contacts==1.1.0
 google-cloud-logging
 hvac
 pydantic
