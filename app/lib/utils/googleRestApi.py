@@ -2,23 +2,22 @@ from requests import Session
 from urllib.parse import urljoin
 from google.oauth2 import service_account
 from google.auth.transport.requests import Request
-from fastapi import HTTPException
-
-from googleapiclient.errors import HttpError
+from app.lib.utils.custom_error_handling import CustomBaseException
 
 
-def httpErrorHandler(func):
-    def wrapper(*args, **kwargs):
-        status_code, return_value = func(*args, **kwargs)
-        if status_code == 200:
-            return return_value
-        else:
-            raise HTTPException(
-                status_code=status_code,
-                detail=return_value["error"]["message"],
-            )
+def error_handler_factory(error: CustomBaseException):
+    def httpErrorHandler(func):
+        def wrapper(*args, **kwargs):
+            status_code, return_value = func(*args, **kwargs)
+            print(return_value)
+            if status_code == 200:
+                return return_value
+            else:
+                raise (error(return_value, status_code))
 
-    return wrapper
+        return wrapper
+
+    return httpErrorHandler
 
 
 class GoogleRestApi:

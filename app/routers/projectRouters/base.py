@@ -7,6 +7,7 @@ from app.dependencies import (
     get_iam_client,
 )
 from app.lib.utils.customRoute import CustomRoute
+from app.lib.utils.secret import get_secrets
 from app.models.projects import ProjectDetails
 from app.lib.ressources.projectCreator import create_project_orange
 from app import config
@@ -16,6 +17,7 @@ from app.lib.ressources.essentialContacts import (
 )
 from app.roles.ProjectCreationRoles import ProjectCreationRoles
 from app.lib.ressources.projectCreator import set_iam_from_requests
+from app.clients.basicatClient import get_basicat_info
 
 from app.lib.utils.custom_error_handling import CustomBaseException
 
@@ -48,30 +50,27 @@ def create_project(
     project_client=Depends(get_project_client),
     iam_client=Depends(get_iam_client),
 ):
-    # iosw_secret = get_secrets(secret="iosw")
+    iosw_secret = get_secrets(secret="iosw")
     current_table_id = config.ESSENTIAL_CONTACTS_CURRENT_TABLE
 
-    # response_basicat = basicatClient.get_basicat_info(
-    #     iosw_secret["username"], iosw_secret["password"], request.basicat
-    # )
-    # if response_basicat.status_code != 200:
-    #     response.status_code = status.HTTP_404_NOT_FOUND
-    #     return {
-    #         "message": f"No application found for basicat :{request.basicat}",
-    #     }
-
-    response_create, name = create_project_orange(
-        request=request, client=project_client
+    response_basicat = get_basicat_info(
+        iosw_secret["username"], iosw_secret["password"], request.basicat
     )
-
-    wait_essential_contacts_disponibility(essential_contacts_client, name)
-
-    if config.ENV == "PRD":
-        billing_client.set_billing_account(name, config.BILLING_ID)
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"message": "billing account could not be associated"}
-
+    if response_basicat.status_code != 200:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return {
+            "message": f"No application found for basicat :{request.basicat}",
+        }
     try:
+        response_create, name = create_project_orange(
+            request=request, client=project_client
+        )
+
+        wait_essential_contacts_disponibility(essential_contacts_client, name)
+
+        if config.ENV == "PRD":
+            billing_client.set_billing_account(name, config.BILLING_ID)
+
         mappings = [
             {"emails": request.label_map.accountable, "category": "TECHNICAL"},
             {"emails": request.label_map.project_owner, "category": "ALL"},
@@ -90,6 +89,7 @@ def create_project(
         ]
 
         set_iam_from_requests(iam_client, request, name, list_roles)
+
     except CustomBaseException as e:
         response.status_code = e.status_code
         return {"message": e.message}
