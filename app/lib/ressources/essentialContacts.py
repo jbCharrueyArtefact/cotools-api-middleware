@@ -1,6 +1,5 @@
 import datetime
 
-from google.cloud.essential_contacts_v1.types.enums import NotificationCategory
 from app.models.essentialContacts import EssentialContact, EssentialContactList
 import time
 
@@ -13,7 +12,10 @@ def modify_essential_contacts(
     current_table_id,
 ):
 
-    existing_contacts = essConClient.get_essential_contacts_client(project_id)
+    existing_contacts = EssentialContactList(
+        **essConClient.get_essentialContacts(project_id)
+    )
+
     _update_essential_contacts_in_cloud(
         project_id, essConClient, data, existing_contacts
     )
@@ -86,7 +88,7 @@ def _create_or_patch_essential_contacts(
             )
 
         else:
-            essConClient.create_essential_contacts_client(
+            essConClient.create_essential_contacts(
                 project_id=project_id, data=contact
             )
 

@@ -59,7 +59,7 @@ def test_get_iam(expected_status_code, project_id, session, host):
         ),
         pytest.param(
             {
-                "message": "User fake_user@orange.com does not exist. from Iam Management client"
+                "message": "User fake_user@orange.com does not exist. from Iam Management"
             },
             400,
             "ofr-fgt-appcotools-1-dev",
@@ -69,7 +69,7 @@ def test_get_iam(expected_status_code, project_id, session, host):
         ),
         pytest.param(
             {
-                "message": "User louis.rousselotdesaintceran.ext@artefact.com does not exist. from Iam Management client"
+                "message": "User louis.rousselotdesaintceran.ext@artefact.com does not exist. from Iam Management"
             },
             400,
             "ofr-fgt-appcotools-1-dev",
@@ -80,7 +80,7 @@ def test_get_iam(expected_status_code, project_id, session, host):
         ),
         pytest.param(
             {
-                "message": "Request contains an invalid argument. from Iam Management client"
+                "message": "Request contains an invalid argument. from Iam Management"
             },
             400,
             "fake_project",
@@ -88,7 +88,7 @@ def test_get_iam(expected_status_code, project_id, session, host):
         ),
         pytest.param(
             {
-                "message": "Role (roles/servicemanagement.serviceConsumer) does not exist in the resource's hierarchy. from Iam Management client"
+                "message": "Role (roles/servicemanagement.serviceConsumer) does not exist in the resource's hierarchy. from Iam Management"
             },
             400,
             "ofr-fgt-appcotools-1-dev",

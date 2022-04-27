@@ -1,5 +1,6 @@
-from app.lib.utils.googleRestApi import GoogleRestApi, httpErrorHandler
+from app.lib.utils.googleRestApi import GoogleRestApi, error_handler_factory
 import json
+from app.lib.utils.custom_error_handling import CustomBillingClientException
 
 
 class BillingAccountClient(GoogleRestApi):
@@ -11,7 +12,7 @@ class BillingAccountClient(GoogleRestApi):
         # )
         # self.client = billing_v1.CloudBillingClient(credentials=credentials)
 
-    @httpErrorHandler
+    @error_handler_factory(CustomBillingClientException)
     def set_billing_account(self, project_id, billing_id):
         project = f"projects/{project_id}"
         billing = f"billingAccounts/{billing_id}"

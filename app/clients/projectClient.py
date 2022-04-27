@@ -2,7 +2,7 @@ from googleapiclient.errors import HttpError
 from googleapiclient import discovery
 from google.oauth2 import service_account
 
-from app.lib.utils.googleRestApi import GoogleRestApi
+from app.lib.utils.googleRestApi import GoogleRestApi, error_handler_factory
 from app.lib.utils.custom_error_handling import CustomProjectCreationException
 
 

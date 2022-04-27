@@ -1,6 +1,6 @@
 class CustomBaseException(BaseException):
     def __init__(self, message, status_code, client):
-        self.message = message + " from " + client + " client"
+        self.message = f"{message} from {client}"
         self.status_code = status_code
         self.client = client
 
