@@ -24,6 +24,14 @@ class EssentialContactsClient(GoogleRestApi):
             project_id, email, self._del_essential_contact_by_id
         )
 
+    def is_owner(self, project_id, email):
+        contacts = EssentialContactList(
+            **self.get_essentialContacts(project_id)
+        )
+        for contact in contacts.essentialContacts:
+            if contact.email == email:
+                return contact.notificationCategorySubscriptions == "ALL"
+
     @error_handler_factory(CustomEssentialContactException)
     def create_essential_contacts(self, project_id, data: EssentialContact):
         sentData = {
