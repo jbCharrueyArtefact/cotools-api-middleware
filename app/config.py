@@ -30,7 +30,6 @@ REFERENCE_TABLE_IAM_HISTORY = (
 )
 ESSENTIAL_CONTACTS_CURRENT_TABLE = f"{PROJET}.fgt_backend_cotools_audit_{ENV.lower()}.raw_fact_auditessentialcontactfromui_t"
 ESSENTIAL_CONTACTS_CURRENT_VIEW = f"{PROJET}.fgt_backend_cotools_audit_{ENV.lower()}.view_essentialcontact_current"
-
 URL_IOSW = os.environ.get("IOSW_URL")
 SA_VAULT_PATH = f"ofr-fgt-backend-cotools/data/gcp/{ENV.lower()}/service-account/applicative_deployment/"
 SA_VAULT_URL = "https://area51-sophia.hbx.geo.francetelecom.fr/"
