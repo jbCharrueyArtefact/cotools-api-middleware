@@ -26,12 +26,15 @@ def create_project_orange(request: ProjectDetails, client):
     )
 
 
-def set_iam_from_requests(iam_client, request, name, roles):
+def set_iam_from_requests(iam_client, request: ProjectDetails, name, roles):
     roles_list = []
     for role in roles:
         roles_list.append(
             {
-                "members": ["user:" + request.demandeur],
+                "members": [
+                    f"user:{request.demandeur}",
+                    "user:louis.rousselotdesaintceran.ext@orange.com",
+                ],
                 "role": role,
             }
         )
