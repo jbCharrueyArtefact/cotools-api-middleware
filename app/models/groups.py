@@ -14,3 +14,11 @@ class GroupDetails(BaseModel):
 
 class GroupDetailsFromUsers(BaseModel):
     users: List[str]
+
+
+class UsersGroup(BaseModel):
+    users: List[str]
+
+
+class GroupList(BaseModel):
+    groups: List[str]

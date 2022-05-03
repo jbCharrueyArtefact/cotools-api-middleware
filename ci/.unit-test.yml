@@ -4,8 +4,12 @@ unit-tester:
   before_script:
       - export PYTHONPATH=.
   script:
-    - pytest tests/unit/
+    - pytest tests/unit/ --junitxml=report_unit.xml
   allow_failure: false
+  artifacts:
+    when: always
+    reports:
+      junit: report_unit.xml
   except:
     - develop
     - master

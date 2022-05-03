@@ -41,6 +41,10 @@ class CustomBillingClientException(CustomBaseException):
             message=message, status_code=status_code, client="Billing"
         )
 
+class CustomGroupClientException(CustomBaseException):
+    def __init__(self, message, status_code):
+        super().__init__(
+            message=message, status_code=status_code, client="Group"
 
 class CustomBigQueryClientException(CustomBaseException):
     def __init__(self, message, status_code):

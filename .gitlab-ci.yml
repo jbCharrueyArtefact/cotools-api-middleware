@@ -7,6 +7,8 @@ variables:
       VAULT_PASSWORD: $VAULT_PASSWORD
       ROLE_ID: $ROLE_ID
       SECRET_ID: $SECRET_ID
+      SHARED_DATA_ROLE_ID: $SHARED_DATA_ROLE_ID
+      SHARED_DATA_SECRET_ID: $SHARED_DATA_SECRET_ID
 
 include:
   - local : 'ci/.build.yml'

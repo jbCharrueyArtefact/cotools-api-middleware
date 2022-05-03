@@ -1,11 +1,7 @@
 import pytest
-from app.models.essentialContacts import (
-    EssentialContactListOut,
-)
 import json
 import random
 import string
-from app.lib.utils.custom_error_handling import CustomEssentialContactException
 
 
 def create_payload(cat, fixed_user=False):
