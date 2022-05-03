@@ -73,7 +73,11 @@ def create_project(
 
         mappings = [
             {"emails": request.label_map.accountable, "category": "TECHNICAL"},
-            {"emails": request.label_map.project_owner, "category": "ALL"},
+            {
+                "emails": request.label_map.project_owner
+                + [request.demandeur],
+                "category": "ALL",
+            },
         ]
 
         create_essential_contact_from_list_email(
