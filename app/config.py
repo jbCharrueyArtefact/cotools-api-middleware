@@ -48,10 +48,10 @@ SA_NAMES = {
     "group_creation": "sa-ofr-group-creation",
 }
 
-DATA_GROUPS = (
-    "ofr-fgt-shared-data-dev.fgt_data_groups_info_dev.raw_fact_datagroups"
-)
+DATA_GROUPS = f"{PROJET}.fgt_data_groups_info_dev.raw_fact_datagroups"
 
-GESTIONNAIRE_DATA = "ofr-fgt-shared-data-dev.fgt_data_groups_info_dev.raw_fact_gestionnairedata"
+GESTIONNAIRE_DATA = (
+    f"{PROJET}.fgt_data_groups_info_dev.raw_fact_gestionnairedata"
+)
 
 SECRET = ["iosw"]

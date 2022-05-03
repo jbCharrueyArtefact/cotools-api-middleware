@@ -1,8 +1,5 @@
 from google.cloud.bigquery.client import Client
 from google.cloud.bigquery import SchemaField, LoadJobConfig
-from datetime import datetime
-from app.lib.utils.custom_error_handling import CustomBigQueryClientException
-from app.config import DATA_GROUPS, GESTIONNAIRE_DATA
 
 
 class BigQueryWrapper(Client):
@@ -35,28 +32,6 @@ class BigQueryWrapper(Client):
         table = self.get_table(table_id)
         errors = self.insert_rows(table, rows)
         return errors
-
-    def insert_group(
-        self, name, description, entities, is_bank, project, admin
-    ):
-        name = DATA_GROUPS
-        data = [
-            {
-                "group_name": name,
-                "description": description,
-                "email": admin,
-                "entities": entities,
-                "is_banking": is_bank,
-                "project": project,
-                "creation_date": datetime.now().isoformat(),
-            }
-        ]
-
-        self.insert_stream_data(name, data)
-        name = GESTIONNAIRE_DATA
-        data = [{"group_name": name, "admin": admin}]
-
-        self.insert_stream_data(name, data)
 
     def delete_data(self, table_id=None, condition="1=1"):
         job = self.query(f"DELETE FROM `{table_id}` Where {condition};")

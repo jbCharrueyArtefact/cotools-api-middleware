@@ -29,8 +29,12 @@ class EssentialContactsClient(GoogleRestApi):
             **self.get_essentialContacts(project_id)
         )
         for contact in contacts.essentialContacts:
-            if contact.email == email:
-                return contact.notificationCategorySubscriptions == "ALL"
+            if (
+                contact.email == email
+                and "ALL" in contact.notificationCategorySubscriptions
+            ):
+                return True
+        return False
 
     @error_handler_factory(CustomEssentialContactException)
     def create_essential_contacts(self, project_id, data: EssentialContact):
