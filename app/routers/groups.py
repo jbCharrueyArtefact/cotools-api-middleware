@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.clients.groupClient import GroupClient
-from app.dependencies import get_bq_client, get_group_client
+from app.dependencies import get_group_client
 from app.lib.utils.customRoute import CustomRoute
 from app.lib.ressources import groups
 from app.lib.utils.custom_error_handling import CustomGroupClientException
