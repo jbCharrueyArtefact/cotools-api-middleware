@@ -9,7 +9,6 @@ def error_handler_factory(error: CustomBaseException):
     def httpErrorHandler(func):
         def wrapper(*args, **kwargs):
             status_code, return_value = func(*args, **kwargs)
-            print(return_value)
             if status_code == 200:
                 return return_value
             else:
@@ -21,18 +20,23 @@ def error_handler_factory(error: CustomBaseException):
 
 
 class GoogleRestApi:
-    def __init__(self, sa_info, api):
+    def __init__(
+        self,
+        sa_info,
+        api,
+        scopes=["https://www.googleapis.com/auth/cloud-platform"],
+    ):
 
-        self.session = _ApiSession(sa_info, api)
+        self.session = _ApiSession(sa=sa_info, prefix_url=api, scopes=scopes)
 
 
 class _ApiSession(Session):
-    def __init__(self, sa, prefix_url=None, *args, **kwargs):
+    def __init__(self, sa, scopes, prefix_url=None, *args, **kwargs):
         super(_ApiSession, self).__init__(*args, **kwargs)
         self.prefix_url = prefix_url
 
         cred = service_account.Credentials.from_service_account_info(
-            sa, scopes=["https://www.googleapis.com/auth/cloud-platform"]
+            sa, scopes=scopes
         )
         cred.refresh(Request())
         self.headers.update(
@@ -43,5 +47,5 @@ class _ApiSession(Session):
         )
 
     def request(self, method, url, *args, **kwargs):
-        url = urljoin(self.prefix_url, url)
+        url = self.prefix_url + url
         return super(_ApiSession, self).request(method, url, *args, **kwargs)

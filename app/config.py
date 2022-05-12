@@ -49,8 +49,8 @@ SA_NAMES = {
     "billing": "sa-ofr-fgt-billing-account",
     "google_groups_assets": "sa-ofr-fgt-assetggroups-viewer",
     "group_creation": "sa-ofr-group-creation",
-    "bq_shared_data": "sa-ofr-fgt-shared-data-bq-editor",
-    "fire": "sa-ofr-fgt-firestore",
+    "firestore": "sa-ofr-fgt-shared-firestore",
+    "bq_shared_data": "sa-ofr-fgt-shared-data-bq-editor"
 }
 
 DATA_GROUPS = (
@@ -62,3 +62,8 @@ GESTIONNAIRE_DATA = f"{PROJECT_SHARED_DATA_API}.fgt_data_groups_info_dev.raw_fac
 ENTITIES = f"{PROJECT_SHARED_DATA_API}.fgt_data_groups_info_dev.raw_fact_restrictionentities"
 
 SECRET = ["iosw"]
+
+# FIRESTORE
+FIRESTORE_URL = "https://firestore.googleapis.com"
+FIRESTORE_DEFAULT_DB = "(default)"
+FIRESTORE_TARGET_PROJECT = f"ofr-fgt-shared-data-{ENV.lower()}"

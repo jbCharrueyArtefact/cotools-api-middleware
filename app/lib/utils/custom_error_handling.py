@@ -54,3 +54,10 @@ class CustomBigQueryClientException(CustomBaseException):
         super().__init__(
             message=message, status_code=status_code, client="Big Query"
         )
+
+
+class CustomFirestoreClientException(CustomBaseException):
+    def __init__(self, message, status_code):
+        super().__init__(
+            message=message, status_code=status_code, client="Firestore"
+        )
