@@ -13,6 +13,7 @@ VAULT = os.environ.get("VAULT_URL")
 VAULT_PATH = f"co-tools-secrets/data/{ENV.lower()}"
 
 PROJET = f"ofr-fgt-backend-cotools-{ENV.lower()}"
+PROJECT_SHARED_DATA_API = f"ofr-fgt-shared-data-{ENV.lower()}"
 
 # ajouté
 AUTH_METHOD = os.getenv("AUTH_METHOD", "vault")
@@ -23,7 +24,9 @@ DOMAIN = "orange.com"
 GROUP_CREATION_CLIENT_ID = (
     "498329607286-7mq34redtdhq8niqr3f6mq2i58eshus6.apps.googleusercontent.com"
 )
-URL_GROUP_CREATION = "https://ofr-0tm-iam-secu-1-prd.ey.r.appspot.com"
+URL_GROUP_CREATION = (
+    "https://manage-group-dot-ofr-0tm-iam-secu-1-prd.ey.r.appspot.com/"
+)
 HIERARCHY_URL = "https://gitlab.si.francetelecom.fr/api/v4/projects/24016/jobs/artifacts/master/raw/output.json?job=google-cloud-platform:list-folders:onmaster"
 REFERENCE_TABLE_IAM_HISTORY = (
     f"{PROJET}.fgt_backend_cotools_iam_{ENV.lower()}.view_iam"
@@ -46,12 +49,16 @@ SA_NAMES = {
     "billing": "sa-ofr-fgt-billing-account",
     "google_groups_assets": "sa-ofr-fgt-assetggroups-viewer",
     "group_creation": "sa-ofr-group-creation",
+    "bq_shared_data": "sa-ofr-fgt-shared-data-bq-editor",
+    "fire": "sa-ofr-fgt-firestore",
 }
 
-DATA_GROUPS = f"{PROJET}.fgt_data_groups_info_dev.raw_fact_datagroups"
-
-GESTIONNAIRE_DATA = (
-    f"{PROJET}.fgt_data_groups_info_dev.raw_fact_gestionnairedata"
+DATA_GROUPS = (
+    f"{PROJECT_SHARED_DATA_API}.fgt_data_groups_info_dev.raw_fact_datagroups"
 )
+
+GESTIONNAIRE_DATA = f"{PROJECT_SHARED_DATA_API}.fgt_data_groups_info_dev.raw_fact_gestionnairedata"
+
+ENTITIES = f"{PROJECT_SHARED_DATA_API}.fgt_data_groups_info_dev.raw_fact_restrictionentities"
 
 SECRET = ["iosw"]
