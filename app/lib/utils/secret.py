@@ -55,7 +55,7 @@ def get_sa_info(sa):
 
 
 @cachetools.func.ttl_cache(maxsize=128, ttl=10 * 60)
-def get_sa_info_from_shared_data_vault(sa):
+def get_sa_info_from_shared_data_vault(sa, scopes=[]):
     client = hvac.Client(
         url=config.SA_VAULT_URL,
         namespace=config.SA_VAULT_NAMESPACE,
@@ -70,6 +70,12 @@ def get_sa_info_from_shared_data_vault(sa):
     secret = client.read(
         path=f"{config.SA_VAULT_DLICE_PATH}/{config.SA_NAMES.get(sa)}"
     )
-    return service_account.Credentials.from_service_account_info(
-        secret["data"]["data"]
-    )
+
+    if scopes:
+        return service_account.Credentials.from_service_account_info(
+            secret["data"]["data"], scopes=scopes.split("|")
+        )
+    else:
+        return service_account.Credentials.from_service_account_info(
+            secret["data"]["data"]
+        )
