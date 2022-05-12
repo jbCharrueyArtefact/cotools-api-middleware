@@ -23,10 +23,6 @@ from app.lib.utils.custom_error_handling import CustomBaseException
 
 subrouter = APIRouter(
     route_class=CustomRoute,
-    dependencies=[
-        Depends(get_bq_client),
-        Depends(get_essential_contact_client),
-    ],
 )
 
 

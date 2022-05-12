@@ -4,6 +4,8 @@ from app.clients.billingAccountClient import BillingAccountClient
 from app.clients.essentialContactsClient import EssentialContactsClient
 from app.clients.projectClient import ProjectClient
 from app.clients.iamClient import IamClient
+from app.lib.ressources.dataGroups import DataGroupsClient
+from app.lib.ressources.entities import EntitiesClient
 from app.lib.utils.secret import (
     get_sa_info,
     get_sa_info_from_shared_data_vault,
@@ -47,6 +49,10 @@ def get_bq_client(sa=Depends(get_sa_dependency("bq"))):
     return BigQueryWrapper(sa)
 
 
+def get_bq_client_shared_data(sa=Depends(get_sa_dependency("bq_shared_data"))):
+    return BigQueryWrapper(sa)
+
+
 def get_group_client(
     credential_creation=Depends(get_sa_dependency("group_creation")),
     credentials=Depends(get_shared_data_secret("google_groups_assets")),
@@ -54,3 +60,11 @@ def get_group_client(
     return GroupClient(
         credentials_creation=credential_creation, credentials=credentials
     )
+
+
+def get_entities_client():
+    return EntitiesClient()
+
+
+def get_data_group_client():
+    return DataGroupsClient()

@@ -13,12 +13,10 @@ from app.lib.utils.custom_error_handling import CustomGroupClientException
 
 class GroupClient:
     def __init__(self, credentials_creation, credentials):
-
         creds = service_account.IDTokenCredentials.from_service_account_info(
             credentials_creation,
             target_audience=config.GROUP_CREATION_CLIENT_ID,
         )
-
         creds.refresh(GoogleRequest())
         token = creds.token
         self._service = build("admin", "directory_v1", credentials=credentials)
@@ -32,16 +30,19 @@ class GroupClient:
         )
 
     def create_group(
-        self, manager: str, name: str, description: str, mail: str
+        self, name: str, description: str, mail: str, manager: str = None
     ):
-        params = {"manager": manager}
+        if manager:
+            params = {"manager": manager}
+        else:
+            params = {"data_group": True}
         data = {"mail": mail, "description": description, "name": name}
         resp = self._create_session.put(
             url=f"{config.URL_GROUP_CREATION}/createGroup/test",
             params=params,
             data=json.dumps(data),
         )
-        return resp.json()
+        return resp.status_code
 
     def list_groups(self, user=None) -> List[str]:
         try:
