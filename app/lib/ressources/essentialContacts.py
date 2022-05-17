@@ -1,19 +1,20 @@
 import datetime
 
-from google.cloud.essential_contacts_v1.types.enums import NotificationCategory
-from app.lib.ressources.models import EssentialContact, EssentialContactList
-import json
+from app.models.essentialContacts import EssentialContact, EssentialContactList
 import time
 
 
-def modify_essentialContacts(
+def modify_essential_contacts(
     project_id,
     essConClient,
     data: EssentialContactList,
     db_client,
     current_table_id,
 ):
-    existing_contacts = essConClient.get_essentialContacts(project_id)
+
+    existing_contacts = EssentialContactList(
+        **essConClient.get_essentialContacts(project_id)
+    )
 
     _update_essential_contacts_in_cloud(
         project_id, essConClient, data, existing_contacts
@@ -25,11 +26,7 @@ def modify_essentialContacts(
 
 
 def create_essential_contact_from_list_email(
-    project_id,
-    mappings,
-    essConClient,
-    db_client,
-    table_id,
+    project_id, mappings, essConClient, db_client, table_id
 ):
     list_contact = []
     for mapping in mappings:
@@ -40,7 +37,7 @@ def create_essential_contact_from_list_email(
             )
             list_contact.append(essContacte)
 
-    return modify_essentialContacts(
+    return modify_essential_contacts(
         project_id=project_id,
         essConClient=essConClient,
         data=EssentialContactList(essentialContacts=list_contact),
@@ -86,12 +83,12 @@ def _create_or_patch_essential_contacts(
     for contact in data.essentialContacts:
 
         if contact.email in existing_contact_email:
-            essConClient.patch_essentialContact(
+            essConClient.patch_essential_contact(
                 project_id, contact.email, data=contact
             )
 
         else:
-            essConClient.create_essentialContacts(
+            essConClient.create_essential_contacts(
                 project_id=project_id, data=contact
             )
 
@@ -104,6 +101,13 @@ def _delete_essential_contacts(
             essConClient.delete_essentialContact(
                 project_id=project_id, email=existing_contact.email
             )
+
+
+def _mydatetimeconverter(dictIter, row):
+    for d in dictIter:
+        t = d[row]
+        d[row] = t.strftime("%Y-%m-%dT%H:%M:%S")
+        yield d
 
 
 def _update_db(
@@ -121,7 +125,9 @@ def _update_db(
 
     if len(rows) > 0:
 
-        return db_client.insert_data(current_table_id, rows)
+        return db_client.insert_stream_data(
+            current_table_id, _mydatetimeconverter(rows, "time")
+        )
 
     else:
         return None

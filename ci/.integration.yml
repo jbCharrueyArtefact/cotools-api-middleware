@@ -7,8 +7,12 @@ integration-tester:
     before_script:
       - export PYTHONPATH=.
     script:
-      - pytest test/integration/
+      - pytest tests/integration/ --junitxml=report_integration.xml
     allow_failure: false
+    artifacts:
+      when: always
+      reports:
+        junit: report_integration.xml
     only:
       - merge_requests
     except:

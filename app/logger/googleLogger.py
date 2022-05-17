@@ -42,14 +42,13 @@ class GCPFormatter(logging.Formatter):
         if len(httpsrequest.keys()) > 0:
             log["httpRequest"] = httpsrequest
 
-        print(log)
-
         return log
 
 
 class GoogleLogger(CloudLoggingHandler):
     def __init__(self):
         client = Client(project=PROJET, credentials=credentials)
+        client._use_grpc = False
         super(GoogleLogger, self).__init__(client)
 
     def emit(self, record):

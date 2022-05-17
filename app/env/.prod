@@ -1,2 +1,3 @@
 VAULT_URL=https://area51-montsouris.preprod.hbx.geo.francetelecom.fr/
 PROJECT=ofr-fgt-backend-cotools-prd
+IOSW_URL=http://iosw-ecm.itn.ftgroup:8008/FTC/SearchComponent-1
